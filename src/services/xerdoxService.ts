@@ -29,12 +29,12 @@ export class XerdoxService {
 
   constructor() {
     const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey || apiKey === "MY_GEMINI_API_KEY") {
-      console.error("GEMINI_API_KEY is missing. Please set it in your environment variables.");
+    if (!apiKey || apiKey === "MY_GEMINI_API_KEY" || apiKey === "undefined") {
+      console.error("GEMINI_API_KEY is missing or invalid. Please check your AI Studio Secrets.");
     }
     this.ai = new GoogleGenAI({ apiKey: apiKey || "" });
     this.chat = this.ai.chats.create({
-      model: "gemini-3.1-pro-preview",
+      model: "gemini-3-flash-preview",
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
       },
@@ -54,7 +54,7 @@ export class XerdoxService {
           },
         ];
         const response: GenerateContentResponse = await this.ai.models.generateContent({
-          model: "gemini-3.1-pro-preview",
+          model: "gemini-3-flash-preview",
           contents: [{ parts }],
           config: { systemInstruction: SYSTEM_INSTRUCTION }
         });
@@ -63,9 +63,12 @@ export class XerdoxService {
         const response: GenerateContentResponse = await this.chat.sendMessage({ message: text });
         return response.text || "Kuch error aa gaya, try again? 📝";
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Xerdox Error:", error);
-      return "Arre yaar, server down hai shayad. Thodi der baad try kar! ⚡";
+      if (error?.message?.includes('API_KEY_INVALID') || error?.message?.includes('API key not found')) {
+        return "Bro, API Key missing hai ya invalid hai. AI Studio ke Secrets check kar! 🔑";
+      }
+      return "Arre yaar, server down hai shayad (ya model busy hai). Thodi der baad try kar! ⚡";
     }
   }
 }

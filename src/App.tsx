@@ -24,9 +24,66 @@ export default function App() {
       <main className="flex-1 max-w-[1600px] mx-auto w-full px-6 py-8">
         {/* Hero Section */}
         {activeCategory !== 'XERDOX AI' && (
-          <section className="mb-16">
-            <HeroSlider />
-          </section>
+          <>
+            <section className="mb-16">
+              <HeroSlider />
+            </section>
+
+            {/* Featured XERDOX AI Section */}
+            {activeCategory === 'All' && (
+              <section className="mb-16">
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-900/40 to-indigo-900/40 border border-purple-500/20 p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 blur-3xl -mr-32 -mt-32 rounded-full" />
+                  <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-600/10 blur-3xl -ml-32 -mb-32 rounded-full" />
+                  
+                  <div className="relative z-10 flex-1 text-center md:text-left">
+                    <div className="inline-flex items-center gap-2 bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-xs font-bold mb-6 border border-purple-500/30">
+                      <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" />
+                      NEW FEATURE
+                    </div>
+                    <h2 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
+                      Meet <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">XERDOX AI</span>
+                    </h2>
+                    <p className="text-gray-300 text-lg mb-8 max-w-xl leading-relaxed">
+                      Your high-performance academic and utility assistant. Solve complex math, code faster, and learn anything in seconds.
+                    </p>
+                    <button 
+                      onClick={() => setActiveCategory('XERDOX AI')}
+                      className="bg-purple-600 hover:bg-purple-500 text-white px-8 py-4 rounded-xl font-bold transition-all hover:scale-105 shadow-lg shadow-purple-600/20 flex items-center gap-3 mx-auto md:mx-0"
+                    >
+                      <div className="w-5 h-5 bg-white/20 rounded flex items-center justify-center">
+                        <span className="text-[10px] font-black">X</span>
+                      </div>
+                      CHAT WITH XERDOX
+                    </button>
+                  </div>
+
+                  <div className="relative z-10 w-full md:w-1/3 aspect-square max-w-[300px]">
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-3xl rotate-6 opacity-20" />
+                    <div className="absolute inset-0 bg-[#0b141a] rounded-3xl border border-purple-500/30 shadow-2xl flex flex-col p-4">
+                      <div className="flex items-center gap-2 mb-4 border-b border-white/5 pb-2">
+                        <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center">
+                          <span className="text-[10px] text-purple-400 font-bold">X</span>
+                        </div>
+                        <span className="text-[10px] font-bold text-gray-400">XERDOX AI</span>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="bg-[#202c33] p-2 rounded-lg rounded-tl-none text-[10px] text-gray-300 w-4/5">
+                          Hey bestie! Need help with math? ⚡
+                        </div>
+                        <div className="bg-[#005c4b] p-2 rounded-lg rounded-tr-none text-[10px] text-white w-4/5 ml-auto">
+                          Solve $\int x^2 dx$
+                        </div>
+                        <div className="bg-[#202c33] p-2 rounded-lg rounded-tl-none text-[10px] text-gray-300 w-4/5">
+                          Sure! The answer is $\frac{x^3}{3} + C$ ✅
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            )}
+          </>
         )}
 
         {/* Store Navigation */}

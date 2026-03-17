@@ -7,9 +7,17 @@ export const Navbar = () => {
     <nav className="sticky top-0 z-50 w-full bg-epic-black/95 backdrop-blur-sm border-b border-white/5 px-6 py-4">
       <div className="max-w-[1600px] mx-auto flex items-center justify-between">
         <div className="flex items-center gap-8">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-saffron rounded-lg flex items-center justify-center font-bold text-black">G</div>
-            <span className="font-bold text-xl tracking-tighter">GAMES HUB <span className="text-saffron">INDIA</span></span>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-saffron rounded-lg flex items-center justify-center font-bold text-black">G</div>
+              <span className="font-bold text-xl tracking-tighter">GAMES HUB <span className="text-saffron">INDIA</span></span>
+            </div>
+            <div className="flex items-center gap-1 mt-0.5 ml-1">
+              <div className="w-3 h-3 bg-purple-600 rounded-sm flex items-center justify-center">
+                <span className="text-[8px] font-black text-white">X</span>
+              </div>
+              <span className="text-[9px] font-bold text-purple-400 tracking-[0.2em] uppercase">XERDOX AI</span>
+            </div>
           </div>
           
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-400">
