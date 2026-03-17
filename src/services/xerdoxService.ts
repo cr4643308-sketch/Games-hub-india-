@@ -24,51 +24,85 @@ export interface Message {
 }
 
 export class XerdoxService {
-  private ai: GoogleGenAI;
-  private chat: any;
+  private ai: GoogleGenAI | null = null;
+  private chat: any = null;
 
-  constructor() {
+  private init() {
     const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey || apiKey === "MY_GEMINI_API_KEY" || apiKey === "undefined") {
-      console.error("GEMINI_API_KEY is missing or invalid. Please check your AI Studio Secrets.");
+    
+    // Check for common "missing" values
+    if (!apiKey || apiKey === "MY_GEMINI_API_KEY" || apiKey === "undefined" || apiKey === "") {
+      console.error("XERDOX AI: GEMINI_API_KEY is missing. Please add it to AI Studio Secrets.");
+      return false;
     }
-    this.ai = new GoogleGenAI({ apiKey: apiKey || "" });
-    this.chat = this.ai.chats.create({
-      model: "gemini-3-flash-preview",
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
-      },
-    });
+
+    try {
+      this.ai = new GoogleGenAI({ apiKey });
+      this.chat = this.ai.chats.create({
+        model: "gemini-flash-latest", // Using the most stable flash alias
+        config: {
+          systemInstruction: SYSTEM_INSTRUCTION,
+        },
+      });
+      return true;
+    } catch (err) {
+      console.error("XERDOX AI: Initialization failed", err);
+      return false;
+    }
   }
 
   async sendMessage(text: string, imageBase64?: string): Promise<string> {
-    try {
-      if (imageBase64) {
-        const parts = [
-          { text },
-          {
-            inlineData: {
-              mimeType: "image/jpeg",
-              data: imageBase64.split(',')[1],
-            },
-          },
-        ];
-        const response: GenerateContentResponse = await this.ai.models.generateContent({
-          model: "gemini-3-flash-preview",
-          contents: [{ parts }],
-          config: { systemInstruction: SYSTEM_INSTRUCTION }
-        });
-        return response.text || "Sorry bestie, I couldn't process that image. 😔";
-      } else {
-        const response: GenerateContentResponse = await this.chat.sendMessage({ message: text });
-        return response.text || "Kuch error aa gaya, try again? 📝";
+    // Try to initialize if not already done
+    if (!this.ai || !this.chat) {
+      const success = this.init();
+      if (!success) {
+        return "Bro, setup incomplete hai. AI Studio ke 'Secrets' tab mein 'GEMINI_API_KEY' add kar do, phir refresh karo! 🔑⚡";
       }
-    } catch (error: any) {
-      console.error("Xerdox Error:", error);
-      if (error?.message?.includes('API_KEY_INVALID') || error?.message?.includes('API key not found')) {
-        return "Bro, API Key missing hai ya invalid hai. AI Studio ke Secrets check kar! 🔑";
-      }
-      return "Arre yaar, server down hai shayad (ya model busy hai). Thodi der baad try kar! ⚡";
     }
+
+    const maxRetries = 2;
+    let lastError = null;
+
+    for (let i = 0; i <= maxRetries; i++) {
+      try {
+        if (imageBase64) {
+          const parts = [
+            { text: text || "What is in this image?" },
+            {
+              inlineData: {
+                mimeType: "image/jpeg",
+                data: imageBase64.split(',')[1],
+              },
+            },
+          ];
+          const response: GenerateContentResponse = await this.ai!.models.generateContent({
+            model: "gemini-flash-latest",
+            contents: [{ parts }],
+            config: { systemInstruction: SYSTEM_INSTRUCTION }
+          });
+          return response.text || "Sorry bestie, I couldn't process that image. 😔";
+        } else {
+          const response: GenerateContentResponse = await this.chat.sendMessage({ message: text });
+          return response.text || "Kuch error aa gaya, try again? 📝";
+        }
+      } catch (error: any) {
+        lastError = error;
+        console.error(`Xerdox Attempt ${i + 1} failed:`, error);
+        
+        // If it's an auth error, don't bother retrying
+        if (error?.message?.includes('API_KEY_INVALID') || error?.message?.includes('401') || error?.message?.includes('403')) {
+          return "Bro, API Key invalid lag rahi hai. AI Studio ke Secrets check kar! 🔑";
+        }
+
+        // Wait a bit before retrying (exponential backoff)
+        if (i < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+          // Re-init chat on failure to clear any stale state
+          this.init();
+        }
+      }
+    }
+
+    return "Arre yaar, server sach mein down lag raha hai. Thodi der baad try kar, main yahin hoon! ⚡";
   }
 }
