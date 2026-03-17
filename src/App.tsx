@@ -72,10 +72,10 @@ export default function App() {
                           Hey bestie! Need help with math? ⚡
                         </div>
                         <div className="bg-[#005c4b] p-2 rounded-lg rounded-tr-none text-[10px] text-white w-4/5 ml-auto">
-                          Solve $\int x^2 dx$
+                          Solve {'$\\int x^2 dx$'}
                         </div>
                         <div className="bg-[#202c33] p-2 rounded-lg rounded-tl-none text-[10px] text-gray-300 w-4/5">
-                          Sure! The answer is $\frac{x^3}{3} + C$ ✅
+                          Sure! The answer is {'$\\frac{x^3}{3} + C$'} ✅
                         </div>
                       </div>
                     </div>
