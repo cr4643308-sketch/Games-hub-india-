@@ -30,17 +30,6 @@ export const XerdoxAI = () => {
 
   useEffect(() => {
     xerdoxRef.current = new XerdoxService();
-    
-    // Check if API key is likely missing and show a system message
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey || apiKey === "MY_GEMINI_API_KEY" || apiKey === "undefined" || apiKey === "") {
-      setMessages(prev => [...prev, {
-        id: 'system-auth',
-        role: 'model',
-        text: "⚠️ **System Alert:** Bro, AI Studio ke **Secrets** tab mein `GEMINI_API_KEY` add karna bhool gaye ho shayad. Jab tak key nahi hogi, main reply nahi kar paunga! 🔑⚡",
-        timestamp: new Date(),
-      }]);
-    }
   }, []);
 
   useEffect(() => {

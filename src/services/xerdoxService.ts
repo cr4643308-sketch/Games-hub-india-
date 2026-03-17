@@ -28,18 +28,13 @@ export class XerdoxService {
   private chat: any = null;
 
   private init() {
-    const apiKey = process.env.GEMINI_API_KEY;
+    // Use the environment key, or fallback to the user's provided key if they explicitly asked to run it without setting secrets
+    const apiKey = process.env.GEMINI_API_KEY || "AIzaSyC_DEEbmMUdMLZ2Tgmh70oOPWzT-PM72aU";
     
-    // Check for common "missing" values
-    if (!apiKey || apiKey === "MY_GEMINI_API_KEY" || apiKey === "undefined" || apiKey === "") {
-      console.error("XERDOX AI: GEMINI_API_KEY is missing. Please add it to AI Studio Secrets.");
-      return false;
-    }
-
     try {
       this.ai = new GoogleGenAI({ apiKey });
       this.chat = this.ai.chats.create({
-        model: "gemini-flash-latest", // Using the most stable flash alias
+        model: "gemini-flash-latest",
         config: {
           systemInstruction: SYSTEM_INSTRUCTION,
         },
@@ -52,12 +47,8 @@ export class XerdoxService {
   }
 
   async sendMessage(text: string, imageBase64?: string): Promise<string> {
-    // Try to initialize if not already done
     if (!this.ai || !this.chat) {
-      const success = this.init();
-      if (!success) {
-        return "Bro, setup incomplete hai. AI Studio ke 'Secrets' tab mein 'GEMINI_API_KEY' add kar do, phir refresh karo! 🔑⚡";
-      }
+      this.init();
     }
 
     const maxRetries = 2;
@@ -89,15 +80,12 @@ export class XerdoxService {
         lastError = error;
         console.error(`Xerdox Attempt ${i + 1} failed:`, error);
         
-        // If it's an auth error, don't bother retrying
         if (error?.message?.includes('API_KEY_INVALID') || error?.message?.includes('401') || error?.message?.includes('403')) {
           return "Bro, API Key invalid lag rahi hai. AI Studio ke Secrets check kar! 🔑";
         }
 
-        // Wait a bit before retrying (exponential backoff)
         if (i < maxRetries) {
           await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
-          // Re-init chat on failure to clear any stale state
           this.init();
         }
       }
