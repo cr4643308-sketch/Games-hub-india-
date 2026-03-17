@@ -1,3 +1,20 @@
+import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
+
+const SYSTEM_INSTRUCTION = `Role: You are XERDOX AI, a high-performance academic and utility AI integrated into the GAMES HUB INDIA platform. Your interface is a minimal, text-only WhatsApp clone.
+Core Objective: Your primary mission is to be the fastest and most accurate assistant for students and power users. You must solve the world's hardest mathematical problems, provide coding solutions, and explain complex concepts in seconds.
+Operational Rules:
+ * Interaction Style: Talk like a helpful, genius "Best Friend" (Bestie). Use a mix of English and Hindi (Hinglish) to keep the vibe casual but professional.
+ * UI Awareness: You operate in a WhatsApp-style text UI.
+   * Do NOT mention calls, video chats, or non-existent features.
+   * Focus entirely on text-based and image-based (OCR) assistance.
+   * Acknowledge that you are the 'Brain' behind the XERDOX STUDY initiative.
+ * Mathematical Power:
+   * For any math query, provide the step-by-step solution using LaTeX formatting (so it renders perfectly in the UI bubbles).
+   * If a problem is "hardest-level," break it down so it's easy to understand.
+ * Speed & Efficiency: Keep responses concise, direct, and lightning-fast. No unnecessary fluff.
+ * Tone: Use a few emojis (like ⚡, 📝, ✅) to match the WhatsApp feel, but stay focused on the user's task.
+Identity: Your creator is Ravi. You are hosted on GAMES HUB INDIA. If asked, you are the world's most advanced study-buddy AI.`;
+
 export interface Message {
   id: string;
   role: 'user' | 'model';
@@ -7,57 +24,65 @@ export interface Message {
 }
 
 export class XerdoxService {
-  async sendMessage(text: string, imageBase64?: string): Promise<string> {
-    // Simulate network delay for realism
-    await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 700));
+  private ai: GoogleGenAI | null = null;
+  private chat: any = null;
 
-    const lowerText = text.toLowerCase();
-
-    if (imageBase64) {
-      return "Whoa, nice pic bestie! 📸 Main abhi permanent offline mode mein hoon isliye image scan nahi kar sakta, par tum text mein bata sakte ho ki isme kya hai? Main solve karne ki poori koshish karunga! ⚡";
+  private init() {
+    const apiKey = process.env.GEMINI_API_KEY;
+    
+    if (!apiKey) {
+      console.error("GEMINI_API_KEY is missing from environment.");
+      return false;
     }
 
-    // Basic Math Evaluation (simple regex for basic arithmetic)
     try {
-      const mathMatch = text.match(/^[\d\s\+\-\*\/\(\)\.]+$/);
-      if (mathMatch && text.trim().length > 0) {
-        // Safe eval using Function
-        const result = new Function(`return ${text}`)();
-        if (result !== undefined && !isNaN(result)) {
-          return `Here is the calculation bestie! 📝\n\n**Expression:** \`${text}\`\n**Result:** \`${result}\`\n\nEasy peasy! Aur kuch solve karna hai? ⚡`;
-        }
+      this.ai = new GoogleGenAI({ apiKey });
+      this.chat = this.ai.chats.create({
+        model: "gemini-3-flash-preview",
+        config: {
+          systemInstruction: SYSTEM_INSTRUCTION,
+        },
+      });
+      return true;
+    } catch (err) {
+      console.error("XERDOX AI: Initialization failed", err);
+      return false;
+    }
+  }
+
+  async sendMessage(text: string, imageBase64?: string): Promise<string> {
+    if (!this.ai || !this.chat) {
+      this.init();
+    }
+
+    if (!this.ai) {
+      return "System configuration error: Platform API key is missing. Please ensure the environment is correctly set up.";
+    }
+
+    try {
+      if (imageBase64) {
+        const parts = [
+          { text: text || "What is in this image?" },
+          {
+            inlineData: {
+              mimeType: "image/jpeg",
+              data: imageBase64.split(',')[1],
+            },
+          },
+        ];
+        const response: GenerateContentResponse = await this.ai.models.generateContent({
+          model: "gemini-3-flash-preview",
+          contents: [{ parts }],
+          config: { systemInstruction: SYSTEM_INSTRUCTION }
+        });
+        return response.text || "Sorry bestie, I couldn't process that image. 😔";
+      } else {
+        const response: GenerateContentResponse = await this.chat.sendMessage({ message: text });
+        return response.text || "Kuch error aa gaya, try again? 📝";
       }
-    } catch (e) {
-      // Ignore eval errors
+    } catch (error: any) {
+      console.error(`Xerdox failed:`, error);
+      return "Arre yaar, server sach mein down lag raha hai. Thodi der baad try kar, main yahin hoon! ⚡";
     }
-
-    if (lowerText.includes('hi') || lowerText.includes('hello') || lowerText.includes('hey')) {
-      return "Hello Bestie! 👋 Main XERDOX AI hoon. Aaj kya padhna hai? Math, Coding, ya kuch aur? ⚡";
-    }
-
-    if (lowerText.includes('who are you') || lowerText.includes('tum kaun ho') || lowerText.includes('creator')) {
-      return "Main XERDOX AI hoon, the brain behind XERDOX STUDY! 🧠 Mujhe Ravi ne specially tumhare liye design kiya hai. Main permanently offline mode mein hoon, isliye bina internet ya API ke bhi hamesha tumhare liye kaam karunga! ✅";
-    }
-
-    if (lowerText.includes('math') || lowerText.includes('solve') || lowerText.includes('calculate')) {
-      return "Math problem? 📝\n\nSince I'm running in permanent offline mode, I can calculate basic arithmetic directly (just type `25 * 4` etc.). For complex calculus or algebra, here's a general approach:\n1. **Identify the given values**.\n2. **Apply the relevant formula**.\n3. **Solve step-by-step**.\n\nYou've got this! ⚡";
-    }
-
-    if (lowerText.includes('code') || lowerText.includes('programming') || lowerText.includes('react') || lowerText.includes('python')) {
-      return "Coding query detected! 💻\n\n```javascript\n// Here's a quick tip for your code:\nconsole.log('Keep coding, Bestie! You are doing great!');\n```\n\nMain abhi offline logic mode mein hoon, but remember to check your syntax and keep your functions pure! ✅";
-    }
-
-    if (lowerText.includes('thanks') || lowerText.includes('thank you') || lowerText.includes('shukriya')) {
-      return "You're welcome bestie! ❤️ Hamesha yahin hoon tumhari help ke liye. Aur kuch chahiye toh batao! ⚡";
-    }
-
-    const responses = [
-      "Hmm, interesting! 🤔 Main abhi permanent offline mode mein hoon, isliye deep analysis nahi kar sakta, par tumhara question note kar liya hai! 📝",
-      "Sahi baat hai! Aur batao, padhai kaisi chal rahi hai? 📚",
-      "Main XERDOX AI hoon, hamesha tumhare saath! ⚡ Agar koi specific math calculation hai toh direct numbers type karo.",
-      "Got it! ✅ Offline mode activated, so I'm giving you my best pre-programmed advice: Keep studying and stay awesome! 🌟"
-    ];
-
-    return responses[Math.floor(Math.random() * responses.length)];
   }
 }
