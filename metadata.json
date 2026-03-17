@@ -1,0 +1,9 @@
+{
+  "name": "GAMES HUB INDIA",
+  "description": "A high-performance web platform for browser-based premium games, AI tools, and productivity apps. No download required.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}

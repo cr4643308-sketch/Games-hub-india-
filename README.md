@@ -1,11 +1,34 @@
-<div align="center">
+# XERDOX AI on GAMES HUB INDIA
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+This project is a specialized AI interface for 'XERDOX AI', hosted on 'GAMES HUB INDIA'.
 
-  <h1>Built with AI Studio</h2>
+## Vercel Deployment Instructions
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+To deploy this project to Vercel, follow these steps:
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+1.  **Push to GitHub**: Push your code to a GitHub repository.
+2.  **Import to Vercel**: Go to [vercel.com](https://vercel.com) and import your repository.
+3.  **Configure Environment Variables**:
+    *   In the Vercel project settings, go to **Environment Variables**.
+    *   Add a new variable named `GEMINI_API_KEY`.
+    *   Paste your Google Gemini API key as the value.
+4.  **Deploy**: Click **Deploy**.
 
-</div>
+## Local Development
+
+1.  Install dependencies:
+    ```bash
+    npm install
+    ```
+2.  Create a `.env` file based on `.env.example` and add your `GEMINI_API_KEY`.
+3.  Start the development server:
+    ```bash
+    npm run dev
+    ```
+
+## Features
+
+*   **XERDOX AI**: A high-performance academic and utility AI.
+*   **WhatsApp-style UI**: Minimalist, text-only interface.
+*   **LaTeX Support**: Renders complex mathematical problems perfectly.
+*   **OCR Support**: Analyze images for study assistance.

@@ -1,0 +1,46 @@
+@import "tailwindcss";
+@import "katex/dist/katex.min.css";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-saffron: #FF9933;
+  --color-epic-black: #121212;
+  --color-epic-gray: #202020;
+  --color-epic-light: #2a2a2a;
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-epic-black text-white font-sans antialiased;
+  }
+}
+
+.glass-panel {
+  @apply bg-white/5 backdrop-blur-md border border-white/10;
+}
+
+.saffron-glow {
+  box-shadow: 0 0 20px rgba(255, 153, 51, 0.3);
+}
+
+.epic-card {
+  @apply transition-all duration-300 hover:scale-[1.02] hover:bg-epic-light cursor-pointer rounded-lg overflow-hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-epic-black;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-epic-gray rounded-full hover:bg-epic-light;
+}
