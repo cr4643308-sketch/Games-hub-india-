@@ -1,0 +1,99 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user of the GAMES HUB INDIA platform.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The unique identifier for the user."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "The user's email address."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The user's display name."
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "The URL of the user's profile photo."
+        },
+        "ghiCoins": {
+          "type": "number",
+          "description": "The user's GHI Coin balance."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["user", "manager", "owner"],
+          "description": "The user's role on the platform."
+        },
+        "claimedEvents": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of event IDs that the user has already claimed."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the user was created."
+        }
+      },
+      "required": ["uid", "email", "ghiCoins", "role"]
+    },
+    "Event": {
+      "title": "Event",
+      "description": "An event created by an Owner or Manager to reward users with GHI Coins.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier for the event."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the event."
+        },
+        "description": {
+          "type": "string",
+          "description": "The description of the event."
+        },
+        "rewardAmount": {
+          "type": "number",
+          "description": "The amount of GHI Coins rewarded for participating."
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "The UID of the Owner or Manager who created the event."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the event was created."
+        },
+        "isActive": {
+          "type": "boolean",
+          "description": "Whether the event is currently active."
+        }
+      },
+      "required": ["id", "title", "rewardAmount", "createdBy", "isActive"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/User"
+      },
+      "description": "Stores user profiles and GHI Coin balances."
+    },
+    "/events/{eventId}": {
+      "schema": {
+        "$ref": "#/entities/Event"
+      },
+      "description": "Stores events created by Owners and Managers."
+    }
+  }
+}

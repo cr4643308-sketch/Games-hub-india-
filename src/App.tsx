@@ -4,26 +4,63 @@ import { HeroSlider } from './components/HeroSlider';
 import { GameCard } from './components/GameCard';
 import { ProjectBlueprint } from './ProjectBlueprint';
 import { XerdoxAI } from './components/XerdoxAI';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthModal } from './components/AuthModal';
+import { AdminDashboard } from './components/AdminDashboard';
+import { EarnCoins } from './components/EarnCoins';
 import { GAMES, Game } from './constants';
-import { ChevronRight, LayoutGrid, List, X, Maximize2, Settings, MessageSquare, Power, ShoppingBag } from 'lucide-react';
+import { ChevronRight, LayoutGrid, List, X, Maximize2, Settings, MessageSquare, Power, ShoppingBag, Coins, PlaySquare, Calendar, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
-export default function App() {
+const AppContent = () => {
+  const { user, profile, spendCoins } = useAuth();
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const [sessionStarted, setSessionStarted] = useState(false);
   const categories = ['All', 'Game', 'AI Tool', 'Productivity', 'XERDOX AI'];
 
   const filteredGames = activeCategory === 'All' 
     ? GAMES 
     : GAMES.filter(g => g.category === activeCategory);
 
+  const handleStartSession = async () => {
+    if (!selectedGame) return;
+    
+    if (selectedGame.isFree) {
+      setSessionStarted(true);
+      return;
+    }
+
+    if (!user) {
+      alert("Please sign in to play premium games!");
+      return;
+    }
+
+    const discountedPrice = selectedGame.discount 
+      ? selectedGame.price * (1 - selectedGame.discount / 100) 
+      : selectedGame.price;
+
+    const success = await spendCoins(discountedPrice);
+    if (success) {
+      setSessionStarted(true);
+    } else {
+      alert(`Not enough GHI Coins! You need ${discountedPrice} coins to play this game.`);
+    }
+  };
+
+  const closeGame = () => {
+    setSelectedGame(null);
+    setSessionStarted(false);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
+      <AuthModal />
       
       <main className="flex-1 max-w-[1600px] mx-auto w-full px-6 py-8">
         {/* Hero Section */}
-        {activeCategory !== 'XERDOX AI' && (
+        {activeCategory !== 'XERDOX AI' && activeCategory !== 'Admin Panel' && activeCategory !== 'Earn Coins' && (
           <>
             <section className="mb-16">
               <HeroSlider />
@@ -110,7 +147,36 @@ export default function App() {
             </div>
 
             <div>
-              {activeCategory !== 'XERDOX AI' && (
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Economy</h3>
+              <div className="space-y-1">
+                <button
+                  onClick={() => setActiveCategory('Earn Coins')}
+                  className={`w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                    activeCategory === 'Earn Coins' 
+                      ? 'bg-purple-600/20 text-purple-400 border border-purple-500/30' 
+                      : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                  }`}
+                >
+                  <Coins className="w-4 h-4" /> Earn GHI Coins
+                </button>
+                
+                {(profile?.role === 'owner' || profile?.role === 'manager') && (
+                  <button
+                    onClick={() => setActiveCategory('Admin Panel')}
+                    className={`w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 mt-2 ${
+                      activeCategory === 'Admin Panel' 
+                        ? 'bg-red-500/20 text-red-400 border border-red-500/30' 
+                        : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                    }`}
+                  >
+                    <Shield className="w-4 h-4" /> Admin Panel
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div>
+              {activeCategory !== 'XERDOX AI' && activeCategory !== 'Admin Panel' && activeCategory !== 'Earn Coins' && (
                 <>
                   <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Filters</h3>
                   <div className="space-y-2">
@@ -134,7 +200,11 @@ export default function App() {
 
           {/* Content Area */}
           <div className="flex-1">
-            {activeCategory === 'XERDOX AI' ? (
+            {activeCategory === 'Admin Panel' ? (
+              <AdminDashboard />
+            ) : activeCategory === 'Earn Coins' ? (
+              <EarnCoins />
+            ) : activeCategory === 'XERDOX AI' ? (
               <div className="space-y-8">
                 <div className="flex flex-col items-center text-center mb-12">
                   <motion.div 
@@ -225,7 +295,7 @@ export default function App() {
           <div className="flex gap-8 text-sm text-gray-400">
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-white transition-colors">Cookie Settings</a>
+            <a href="#" className="hover:text-saffron transition-colors">Cookie Settings</a>
           </div>
           <p className="text-xs text-gray-500">© 2026 Games Hub India. All rights reserved.</p>
         </div>
@@ -244,7 +314,7 @@ export default function App() {
             <div className="h-14 bg-epic-black/80 backdrop-blur-md border-b border-white/10 px-6 flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <button 
-                  onClick={() => setSelectedGame(null)}
+                  onClick={closeGame}
                   className="p-2 hover:bg-white/10 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
@@ -265,7 +335,7 @@ export default function App() {
                   <Maximize2 className="w-5 h-5" />
                 </button>
                 <button 
-                  onClick={() => setSelectedGame(null)}
+                  onClick={closeGame}
                   className="ml-4 bg-red-500/10 text-red-500 px-4 py-1.5 rounded font-bold text-xs flex items-center gap-2 hover:bg-red-500 hover:text-white transition-all"
                 >
                   <Power className="w-3 h-3" />
@@ -286,24 +356,43 @@ export default function App() {
                 className="relative w-full max-w-5xl aspect-video bg-black rounded-xl shadow-2xl border border-white/10 overflow-hidden"
               >
                 {/* Simulated Game Loading */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-epic-black">
-                  <div className="w-16 h-16 border-4 border-saffron border-t-transparent rounded-full animate-spin mb-6" />
-                  <h3 className="text-xl font-bold mb-2">Initializing {selectedGame.category}...</h3>
-                  <p className="text-gray-500 text-sm animate-pulse">Optimizing for your browser via WebAssembly</p>
-                </div>
-                
-                {/* Simulated Game Content */}
-                <div className="absolute inset-0 opacity-0 animate-[fadeIn_1s_ease-in_2s_forwards]">
-                  <img src={selectedGame.image} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                    <div className="text-center">
-                      <h2 className="text-4xl font-black mb-4">{selectedGame.title}</h2>
-                      <button className="bg-saffron text-black px-8 py-3 rounded-full font-bold hover:scale-105 transition-transform">
-                        START SESSION
-                      </button>
+                {!sessionStarted ? (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-epic-black">
+                    <div className="w-16 h-16 border-4 border-saffron border-t-transparent rounded-full animate-spin mb-6" />
+                    <h3 className="text-xl font-bold mb-2">Initializing {selectedGame.category}...</h3>
+                    <p className="text-gray-500 text-sm animate-pulse">Optimizing for your browser via WebAssembly</p>
+                    <div className="absolute inset-0 opacity-0 animate-[fadeIn_1s_ease-in_2s_forwards]">
+                      <img src={selectedGame.image} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                        <div className="text-center">
+                          <h2 className="text-4xl font-black mb-4">{selectedGame.title}</h2>
+                          {!selectedGame.isFree && (
+                            <div className="mb-6 flex items-center justify-center gap-2 text-yellow-400 font-bold bg-yellow-400/10 px-4 py-2 rounded-full inline-flex">
+                              <Coins className="w-5 h-5" />
+                              {selectedGame.discount 
+                                ? selectedGame.price * (1 - selectedGame.discount / 100) 
+                                : selectedGame.price} GHI Coins / Session
+                            </div>
+                          )}
+                          <button 
+                            onClick={handleStartSession}
+                            className="bg-saffron text-black px-8 py-3 rounded-full font-bold hover:scale-105 transition-transform block mx-auto"
+                          >
+                            START SESSION
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-epic-black">
+                    <img src={selectedGame.image} className="w-full h-full object-cover opacity-30" referrerPolicy="no-referrer" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <h2 className="text-4xl font-black mb-4 text-saffron">SESSION ACTIVE</h2>
+                      <p className="text-gray-300">The game is now running in the browser.</p>
+                    </div>
+                  </div>
+                )}
               </motion.div>
             </div>
 
@@ -323,6 +412,14 @@ export default function App() {
         )}
       </AnimatePresence>
     </div>
+  );
+};
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 
