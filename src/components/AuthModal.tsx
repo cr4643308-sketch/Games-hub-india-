@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { LogIn, ShieldAlert, X } from 'lucide-react';
 
 export const AuthModal = () => {
-  const { user, isGuest, loading, loginWithGoogle, skipLogin } = useAuth();
+  const { user, isGuest, loading, authError, loginWithGoogle, skipLogin } = useAuth();
 
   if (loading || user || isGuest) return null;
 
@@ -31,6 +31,13 @@ export const AuthModal = () => {
             <p className="text-gray-400 mb-8">
               Sign in to earn GHI Coins, save your progress, and unlock premium games.
             </p>
+
+            {authError && (
+              <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm text-left flex items-start gap-2">
+                <ShieldAlert className="w-5 h-5 shrink-0" />
+                <span>{authError}</span>
+              </div>
+            )}
 
             <button
               onClick={loginWithGoogle}

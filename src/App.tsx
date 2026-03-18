@@ -9,7 +9,7 @@ import { AuthModal } from './components/AuthModal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { EarnCoins } from './components/EarnCoins';
 import { GAMES, Game } from './constants';
-import { ChevronRight, LayoutGrid, List, X, Maximize2, Settings, MessageSquare, Power, ShoppingBag, Coins, PlaySquare, Calendar, Shield } from 'lucide-react';
+import { ChevronRight, LayoutGrid, List, X, Maximize2, Settings, MessageSquare, Power, ShoppingBag, Coins, PlaySquare, Calendar, Shield, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 const AppContent = () => {
@@ -411,6 +411,20 @@ const AppContent = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Floating Badge */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <div className="relative group cursor-pointer" onClick={() => setActiveCategory('XERDOX AI')}>
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+          
+          <div className="relative flex items-center bg-[#1a1a1a] px-6 py-3 rounded-full leading-none">
+            <div className="flex items-center space-x-3">
+              <Sparkles className="w-6 h-6 text-yellow-400 animate-bounce" />
+              <span className="text-gray-100 font-bold tracking-wide">XERDOX AI</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

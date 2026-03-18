@@ -79,6 +79,7 @@ export const Navbar = () => {
               </div>
             ) : (
               <button 
+                type="button"
                 onClick={loginWithGoogle}
                 className="bg-saffron text-black px-4 py-2 rounded font-bold text-sm hover:opacity-90 transition-opacity flex items-center gap-2"
               >
