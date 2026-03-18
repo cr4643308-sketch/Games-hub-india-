@@ -27,10 +27,12 @@
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
     "tailwind-merge": "^3.5.0",
+    "three": "^0.183.2",
     "vite": "^6.2.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
+    "@types/three": "^0.183.1",
     "autoprefixer": "^10.4.21",
     "tailwindcss": "^4.1.14",
     "typescript": "~5.8.2",

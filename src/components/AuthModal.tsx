@@ -33,9 +33,14 @@ export const AuthModal = () => {
             </p>
 
             {authError && (
-              <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm text-left flex items-start gap-2">
-                <ShieldAlert className="w-5 h-5 shrink-0" />
-                <span>{authError}</span>
+              <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm text-left flex flex-col gap-2">
+                <div className="flex items-start gap-2">
+                  <ShieldAlert className="w-5 h-5 shrink-0" />
+                  <span>{authError}</span>
+                </div>
+                <div className="text-xs text-red-300 mt-1 pl-7">
+                  <strong>Tip:</strong> If you are viewing this in an embedded preview, third-party cookies might be blocked. Try opening the app in a new tab using the button in the top right corner of the preview.
+                </div>
               </div>
             )}
 
