@@ -12,6 +12,8 @@ import { GAMES, Game } from './constants';
 import { ChevronRight, LayoutGrid, List, X, Maximize2, Settings, MessageSquare, Power, ShoppingBag, Coins, PlaySquare, Calendar, Shield, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
+import { MinecraftPlayer } from './components/MinecraftPlayer';
+
 const AppContent = () => {
   const { user, profile, spendCoins } = useAuth();
   const [activeCategory, setActiveCategory] = useState<string>('All');
@@ -353,7 +355,7 @@ const AppContent = () => {
               <motion.div 
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="relative w-full max-w-5xl aspect-video bg-black rounded-xl shadow-2xl border border-white/10 overflow-hidden"
+                className={selectedGame.id === 'minecraft-web' && sessionStarted ? "absolute inset-0 bg-black z-50" : "relative w-full max-w-5xl aspect-video bg-black rounded-xl shadow-2xl border border-white/10 overflow-hidden"}
               >
                 {/* Simulated Game Loading */}
                 {!sessionStarted ? (
@@ -384,6 +386,8 @@ const AppContent = () => {
                       </div>
                     </div>
                   </div>
+                ) : selectedGame.id === 'minecraft-web' ? (
+                  <MinecraftPlayer onExit={closeGame} />
                 ) : (
                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-epic-black">
                     <img src={selectedGame.image} className="w-full h-full object-cover opacity-30" referrerPolicy="no-referrer" />
