@@ -28,7 +28,7 @@ export class XerdoxService {
   private chat: any = null;
 
   private init() {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY || "AIzaSyC_DEEbmMUdMLZ2Tgmh70oOPWzT-PM72aU";
     
     if (!apiKey) {
       console.error("GEMINI_API_KEY is missing from environment.");
