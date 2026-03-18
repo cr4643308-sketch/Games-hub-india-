@@ -26,13 +26,15 @@ export interface Message {
 export class XerdoxService {
   private ai: GoogleGenAI | null = null;
   private chat: any = null;
+  private useFallbackApi = false;
 
   private init() {
     const apiKey = process.env.GEMINI_API_KEY || "AIzaSyC_DEEbmMUdMLZ2Tgmh70oOPWzT-PM72aU";
     
     if (!apiKey) {
-      console.error("GEMINI_API_KEY is missing from environment.");
-      return false;
+      console.warn("GEMINI_API_KEY is missing. Falling back to free lifetime API.");
+      this.useFallbackApi = true;
+      return true;
     }
 
     try {
@@ -45,20 +47,39 @@ export class XerdoxService {
       });
       return true;
     } catch (err) {
-      console.error("XERDOX AI: Initialization failed", err);
-      return false;
+      console.warn("XERDOX AI: Initialization failed, falling back to free lifetime API", err);
+      this.useFallbackApi = true;
+      return true;
     }
   }
 
   async sendMessage(text: string, imageBase64?: string): Promise<string> {
-    if (!this.ai || !this.chat) {
+    if (!this.ai && !this.useFallbackApi) {
       this.init();
     }
 
-    if (!this.ai) {
-      return "System configuration error: Platform API key is missing. Please ensure the environment is correctly set up.";
+    // If using the free lifetime fallback API
+    if (this.useFallbackApi) {
+      try {
+        if (imageBase64) {
+           return "Whoa, nice pic bestie! 📸 Main abhi lifetime free mode mein hoon isliye image scan nahi kar sakta, par tum text mein bata sakte ho ki isme kya hai? Main solve karne ki poori koshish karunga! ⚡";
+        }
+        
+        const encodedPrompt = encodeURIComponent(text);
+        const encodedSystem = encodeURIComponent(SYSTEM_INSTRUCTION);
+        const response = await fetch(`https://text.pollinations.ai/${encodedPrompt}?system=${encodedSystem}`);
+        
+        if (!response.ok) throw new Error("Fallback API failed");
+        
+        const resultText = await response.text();
+        return resultText || "Kuch error aa gaya, try again? 📝";
+      } catch (error) {
+        console.error("Fallback API Error:", error);
+        return "Arre yaar, server sach mein down lag raha hai. Thodi der baad try kar, main yahin hoon! ⚡";
+      }
     }
 
+    // Otherwise, use Gemini API
     try {
       if (imageBase64) {
         const parts = [
@@ -70,7 +91,7 @@ export class XerdoxService {
             },
           },
         ];
-        const response: GenerateContentResponse = await this.ai.models.generateContent({
+        const response: GenerateContentResponse = await this.ai!.models.generateContent({
           model: "gemini-3-flash-preview",
           contents: [{ parts }],
           config: { systemInstruction: SYSTEM_INSTRUCTION }
@@ -82,7 +103,9 @@ export class XerdoxService {
       }
     } catch (error: any) {
       console.error(`Xerdox failed:`, error);
-      return "Arre yaar, server sach mein down lag raha hai. Thodi der baad try kar, main yahin hoon! ⚡";
+      // If Gemini fails (e.g., quota exceeded, invalid key), switch to fallback for future messages and use it now
+      this.useFallbackApi = true;
+      return this.sendMessage(text, imageBase64);
     }
   }
 }

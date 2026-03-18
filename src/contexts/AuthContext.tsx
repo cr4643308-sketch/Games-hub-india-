@@ -19,7 +19,7 @@ interface AuthContextType {
   profile: UserProfile | null;
   isGuest: boolean;
   loading: boolean;
-  loginWithGoogle: () => Promise<void>;
+  loginWithGoogle: (e?: React.MouseEvent) => Promise<void>;
   logout: () => Promise<void>;
   skipLogin: () => void;
   addCoins: (amount: number) => Promise<void>;
@@ -89,11 +89,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
-  const loginWithGoogle = async () => {
+  const loginWithGoogle = async (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
     try {
       await signInWithPopup(auth, googleProvider);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login failed:", error);
+      if (error.code === 'auth/popup-closed-by-user') {
+        alert("Sign-in popup was closed before completing. Please try again.");
+      } else if (error.code === 'auth/popup-blocked') {
+        alert("Sign-in popup was blocked by your browser. Please allow popups for this site.");
+      } else if (error.code === 'auth/unauthorized-domain') {
+        alert("This domain is not authorized for Google Sign-In. Please check Firebase settings.");
+      } else {
+        alert("Failed to sign in with Google. Please try again later.");
+      }
     }
   };
 
