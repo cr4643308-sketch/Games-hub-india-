@@ -65,9 +65,18 @@ export class XerdoxService {
            return "Whoa, nice pic bestie! 📸 Main abhi lifetime free mode mein hoon isliye image scan nahi kar sakta, par tum text mein bata sakte ho ki isme kya hai? Main solve karne ki poori koshish karunga! ⚡";
         }
         
-        const encodedPrompt = encodeURIComponent(text);
-        const encodedSystem = encodeURIComponent(SYSTEM_INSTRUCTION);
-        const response = await fetch(`https://text.pollinations.ai/${encodedPrompt}?system=${encodedSystem}`);
+        const response = await fetch('https://text.pollinations.ai/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            messages: [
+              { role: 'system', content: SYSTEM_INSTRUCTION },
+              { role: 'user', content: text }
+            ]
+          })
+        });
         
         if (!response.ok) throw new Error("Fallback API failed");
         
