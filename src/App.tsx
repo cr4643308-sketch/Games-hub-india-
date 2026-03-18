@@ -17,7 +17,7 @@ const AppContent = () => {
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [sessionStarted, setSessionStarted] = useState(false);
-  const categories = ['All', 'Game', 'AI Tool', 'Productivity', 'XERDOX AI'];
+  const categories = ['All', 'Game', 'XERDOX AI'];
 
   const filteredGames = activeCategory === 'All' 
     ? GAMES 
