@@ -4,6 +4,7 @@ import { HeroSlider } from './components/HeroSlider';
 import { GameCard } from './components/GameCard';
 import { ProjectBlueprint } from './ProjectBlueprint';
 import { XerdoxAI } from './components/XerdoxAI';
+import { ApplicationBeta } from './components/ApplicationBeta';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AuthModal } from './components/AuthModal';
 import { AdminDashboard } from './components/AdminDashboard';
@@ -19,6 +20,7 @@ const AppContent = () => {
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [sessionStarted, setSessionStarted] = useState(false);
+  const [showApplication, setShowApplication] = useState(false);
   const categories = ['All', 'Game', 'XERDOX AI'];
 
   const filteredGames = activeCategory === 'All' 
@@ -118,6 +120,33 @@ const AppContent = () => {
                         </div>
                       </div>
                     </div>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* Application Beta Section */}
+            {activeCategory === 'All' && (
+              <section className="mb-16">
+                <div className="relative overflow-hidden rounded-3xl bg-black border border-yellow-500/20 p-8 md:p-12 flex flex-col items-center justify-center text-center">
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-900/20 to-yellow-900/20" />
+                  <div className="relative z-10">
+                    <h2 className="text-3xl md:text-4xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-500">
+                      JOIN THE ELITE RANKS
+                    </h2>
+                    <p className="text-gray-300 mb-8 max-w-xl mx-auto">
+                      Apply now for the exclusive Application Beta and get early access to our premium servers and features.
+                    </p>
+                    <button 
+                      onClick={() => setShowApplication(true)}
+                      className="relative group overflow-hidden rounded-full px-12 py-5 font-black text-xl text-white shadow-[0_0_30px_rgba(255,0,0,0.3)] hover:shadow-[0_0_50px_rgba(255,215,0,0.5)] transition-all duration-500 transform hover:scale-105"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-[length:200%_auto] animate-[gradient_3s_linear_infinite]" />
+                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
+                      <span className="relative z-10 tracking-wider text-white drop-shadow-md">
+                        FILL APPLICATION
+                      </span>
+                    </button>
                   </div>
                 </div>
               </section>
@@ -429,6 +458,13 @@ const AppContent = () => {
           </div>
         </div>
       </div>
+
+      {/* Application Beta Modal */}
+      <AnimatePresence>
+        {showApplication && (
+          <ApplicationBeta onClose={() => setShowApplication(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
