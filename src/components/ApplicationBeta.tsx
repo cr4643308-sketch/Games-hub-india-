@@ -197,10 +197,9 @@ export const ApplicationBeta: React.FC<ApplicationBetaProps> = ({ onClose }) => 
               <div className="w-24 h-24 bg-gradient-to-r from-purple-500 to-yellow-500 rounded-full flex items-center justify-center mb-8 shadow-[0_0_50px_rgba(128,0,128,0.5)]">
                 <Check className="w-12 h-12 text-white" />
               </div>
-              <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-purple-400 mb-4">
-                Application Submitted to Games Hub India!
+              <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-purple-400 mb-4 text-balance">
+                Successfully submitted your form you'll notified on discord
               </h2>
-              <p className="text-gray-300 text-lg">We will review your application and get back to you soon.</p>
             </motion.div>
           ) : (
             <>
