@@ -113,21 +113,30 @@ export const ApplicationBeta: React.FC<ApplicationBetaProps> = ({ onClose }) => 
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/application', {
+      const discordPayload = {
+        embeds: [{
+          title: "New Beta Application",
+          color: 8388736,
+          fields: [
+            { name: "**In-Game Name (IGN):**", value: formData.ign || "N/A", inline: true },
+            { name: "**Age Group:**", value: formData.ageGroup || "N/A", inline: true },
+            { name: "**Daily Playtime:**", value: formData.playtime || "N/A", inline: true },
+            { name: "**Real Name:**", value: formData.realName || "N/A", inline: true },
+            { name: "**Are you a YouTuber?:**", value: formData.isYouTuber || "N/A", inline: true },
+            { name: "**Has Stats:**", value: formData.hasStats || "N/A", inline: true },
+            { name: "**Channel Name & Link:**", value: formData.channelInfo || "N/A", inline: false },
+            { name: "**Community Check:**", value: formData.communityCheck === 'Other' ? formData.communityCheckOther : formData.communityCheck || "N/A", inline: true },
+            { name: "**PvP Tier:**", value: formData.pvpTier || "N/A", inline: true },
+            { name: "**Why do you want to play in our server?:**", value: (formData.motivation || "").substring(0, 1024) || "N/A", inline: false }
+          ],
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      const response = await fetch('/api/apply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ign: formData.ign,
-          ageGroup: formData.ageGroup,
-          playtime: formData.playtime,
-          motivation: formData.motivation,
-          realName: formData.realName,
-          isYouTuber: formData.isYouTuber,
-          hasStats: formData.hasStats,
-          channelInfo: formData.channelInfo,
-          communityCheck: formData.communityCheck === 'Other' ? formData.communityCheckOther : formData.communityCheck,
-          pvpTier: formData.pvpTier
-        })
+        body: JSON.stringify(discordPayload)
       });
 
       if (response.ok) {
