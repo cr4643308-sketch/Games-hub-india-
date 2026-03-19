@@ -69,7 +69,7 @@ export const MinecraftPlayer = ({ onExit }: MinecraftPlayerProps) => {
     containerRef.current.innerHTML = `
       <div id="game_frame" style="width: 100%; height: 100%; position: relative; background: #000;">
         <iframe 
-          src="https://eaglercraft.ru/" 
+          src="https://eaglercraft.com/play/?version=1.8.8" 
           style="width: 100%; height: 100%; border: none;"
           title="Eaglercraft 1.8.8"
         ></iframe>
