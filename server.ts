@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import nodemailer from "nodemailer";
 import { createServer as createViteServer } from "vite";
 import path from "path";
 
@@ -36,46 +35,40 @@ async function startServer() {
         return res.status(400).json({ error: "All fields are required." });
       }
 
-      // Nodemailer transport
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.SMTP_EMAIL,
-          pass: process.env.SMTP_PASSWORD
-        }
-      });
+      const webhookUrl = "https://discord.com/api/webhooks/1484087273682112612/0VC_gUyAcbtaHS3Q6CQda_IBYJcV4gdfsF0VDw2ttCaTrB3ml2rX8lLtGJblueEiO2cx";
 
-      const mailOptions = {
-        from: process.env.SMTP_EMAIL,
-        to: 'cr4643308@gmail.com',
-        subject: `[New Application] Games Hub India - User: ${ign}`,
-        text: `
-New Application Beta Submission
-
-IGN: ${ign}
-Age: ${ageGroup}
-Playtime: ${playtime}
-Why join: ${motivation}
-Real Name: ${realName}
-YouTuber Status: ${isYouTuber}
-YT Stats (30 subs/500 views): ${hasStats}
-Channel Link: ${channelInfo}
-Discord Status: ${communityCheck}
-PvP Tier: ${pvpTier}
-        `
+      const embed = {
+        title: "New Beta Application",
+        color: 8388736, // #800080 (Purple)
+        fields: [
+          { name: "**In-Game Name (IGN):**", value: ign, inline: true },
+          { name: "**Age Group:**", value: ageGroup, inline: true },
+          { name: "**Daily Playtime:**", value: playtime, inline: true },
+          { name: "**Real Name:**", value: realName, inline: true },
+          { name: "**Are you a YouTuber?:**", value: isYouTuber, inline: true },
+          { name: "**Has Stats (30+ subs, 500+ views):**", value: hasStats, inline: true },
+          { name: "**Channel Name & Link:**", value: channelInfo, inline: false },
+          { name: "**Community Check:**", value: communityCheck, inline: true },
+          { name: "**PvP Tier:**", value: pvpTier, inline: true },
+          { name: "**Why do you want to play in our server?:**", value: motivation.substring(0, 1024), inline: false }
+        ],
+        timestamp: new Date().toISOString()
       };
 
-      if (!process.env.SMTP_EMAIL || !process.env.SMTP_PASSWORD) {
-        console.warn("SMTP credentials not configured. Simulating email send.");
-        console.log(mailOptions.text);
-        return res.status(200).json({ success: true, message: "Application submitted (simulated)." });
+      const discordRes = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ embeds: [embed] })
+      });
+
+      if (!discordRes.ok) {
+        throw new Error(`Discord API responded with ${discordRes.status}`);
       }
 
-      await transporter.sendMail(mailOptions);
       res.status(200).json({ success: true, message: "Application submitted successfully." });
     } catch (error) {
-      console.error("Error sending email:", error);
-      res.status(500).json({ error: "Failed to submit application." });
+      console.error("Error sending to Discord:", error);
+      res.status(500).json({ error: "Failed to submit application to Discord." });
     }
   });
 

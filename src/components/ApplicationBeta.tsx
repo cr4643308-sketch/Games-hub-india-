@@ -136,11 +136,19 @@ export const ApplicationBeta: React.FC<ApplicationBetaProps> = ({ onClose }) => 
           onClose();
         }, 3000);
       } else {
-        const data = await response.json();
-        setError(data.error || 'Failed to submit application.');
+        let errorMessage = 'Failed to submit application.';
+        try {
+          const data = await response.json();
+          errorMessage = data.error || errorMessage;
+        } catch (e) {
+          // Fallback if response is not JSON (e.g. 502 Bad Gateway HTML)
+          errorMessage = `Server error (${response.status}). Please try again later.`;
+        }
+        setError(errorMessage);
         setTimeout(() => setError(null), 3000);
       }
     } catch (err) {
+      console.error('Fetch error:', err);
       setError('Network error. Please try again.');
       setTimeout(() => setError(null), 3000);
     } finally {
