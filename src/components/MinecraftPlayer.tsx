@@ -60,19 +60,21 @@ export const MinecraftPlayer = ({ onExit }: MinecraftPlayerProps) => {
     (window as any).eaglercraftXOpts = eaglercraftConfig;
 
     // ============================================================================
-    // Runtime Injection
-    // Since assets.epk and classes.js are external binaries, we inject an iframe 
-    // pointing to a public Eaglercraft 1.8.8 client so it is immediately playable.
-    // In your final production build, replace the iframe with your local <canvas> 
-    // and <script src="classes.js"></script> tags.
+    // Local Runtime Injection (Self-Hosted)
+    // We are now using your own local Eaglercraft files instead of an external iframe.
+    // Ensure you have uploaded 'classes.js' and 'assets.epk' to the public/ folder.
     // ============================================================================
     containerRef.current.innerHTML = `
-      <div id="game_frame" style="width: 100%; height: 100%; position: relative; background: #000;">
-        <iframe 
-          src="https://eaglercraft.com/play/?version=1.8.8" 
-          style="width: 100%; height: 100%; border: none;"
-          title="Eaglercraft 1.8.8"
-        ></iframe>
+      <div style="width: 100%; height: 100%; position: relative; background: #000;">
+        <!-- The actual WebGL Canvas for Eaglercraft -->
+        <canvas id="game_frame" style="width: 100%; height: 100%; display: block;"></canvas>
+        
+        <!-- Missing Files Warning (Hidden by default, shown if classes.js fails to load) -->
+        <div id="missing_files_warning" style="display: none; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.9); color: white; padding: 40px; text-align: center; z-index: 100; font-family: monospace;">
+          <h2 style="color: #ff5555; font-size: 28px; margin-bottom: 20px;">⚠️ Missing Local Game Files</h2>
+          <p style="font-size: 16px; margin-bottom: 10px;">You requested to use your own Eaglercraft build.</p>
+          <p style="font-size: 16px; color: #aaa;">Please upload your <b>classes.js</b> and <b>assets.epk</b> files to the <b>public/</b> directory of this project.</p>
+        </div>
         
         ${selectedPlatform === 'Mobile' ? `
           <!-- Mobile Virtual Touch Controls Overlay (High-Density Scaled) -->
@@ -103,6 +105,15 @@ export const MinecraftPlayer = ({ onExit }: MinecraftPlayerProps) => {
 
     // Execute the requested onLaunch callback
     eaglercraftConfig.onLaunch(platformKey);
+
+    // Inject the local Eaglercraft runtime script
+    const script = document.createElement("script");
+    script.src = "/classes.js";
+    script.onerror = () => {
+      const warning = document.getElementById("missing_files_warning");
+      if (warning) warning.style.display = "flex";
+    };
+    document.body.appendChild(script);
   };
 
   return (
