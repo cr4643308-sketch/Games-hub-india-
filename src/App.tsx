@@ -592,6 +592,26 @@ const AppContent = () => {
           <ApplicationBeta onClose={() => setShowApplication(false)} />
         )}
       </AnimatePresence>
+
+      {/* Floating Xerdox AI Button */}
+      <AnimatePresence>
+        {activeCategory !== 'XERDOX AI' && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setActiveCategory('XERDOX AI')}
+            className="fixed bottom-8 right-8 z-50 flex items-center gap-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-neon-purple/30 p-2 pr-5 rounded-full shadow-[0_0_30px_rgba(176,38,255,0.2)] hover:shadow-[0_0_40px_rgba(176,38,255,0.4)] transition-all group"
+          >
+            <div className="w-10 h-10 rounded-full bg-neon-purple/20 flex items-center justify-center border border-neon-purple/50 group-hover:bg-neon-purple/30 transition-colors">
+              <span className="text-neon-purple font-black text-xl leading-none">X</span>
+            </div>
+            <span className="text-white font-bold tracking-wider text-sm">XERDOX AI</span>
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
