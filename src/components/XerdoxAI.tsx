@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Send, Paperclip, Image as ImageIcon, X, MoreVertical, Search, Phone, Video, CheckCheck, User } from 'lucide-react';
+import { Send, Paperclip, Image as ImageIcon, X, Sparkles, User, Bot, ChevronDown } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
@@ -12,12 +12,16 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const XerdoxAI = () => {
+interface XerdoxAIProps {
+  onClose: () => void;
+}
+
+export const XerdoxAI = ({ onClose }: XerdoxAIProps) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       role: 'model',
-      text: "Hey Bestie! ⚡ XERDOX AI here. Ravi ne mujhe specially tumhare liye design kiya hai. Math problem ho ya coding, bas pooch lo! Main XERDOX STUDY ka dimaag hoon. 📝✅",
+      text: "Hello! I'm XERDOX AI. How can I help you today?",
       timestamp: new Date(),
     }
   ]);
@@ -79,70 +83,83 @@ export const XerdoxAI = () => {
   };
 
   return (
-    <div className="flex flex-col h-[600px] w-full max-w-2xl mx-auto bg-[#0b141a] rounded-2xl overflow-hidden shadow-2xl border border-white/5">
-      {/* WhatsApp Header */}
-      <div className="bg-[#202c33] px-4 py-3 flex items-center justify-between shadow-md z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-neon-blue/20 flex items-center justify-center border border-neon-blue/30">
-            <User className="w-6 h-6 text-neon-blue" />
-          </div>
-          <div>
-            <h3 className="text-white font-bold text-sm">XERDOX AI ⚡</h3>
-            <p className="text-[#8696a0] text-xs">online</p>
-          </div>
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      className="fixed inset-0 z-[100] flex flex-col w-full h-full bg-[#0a0a0a] overflow-hidden"
+    >
+      {/* Header */}
+      <div className="px-6 py-4 flex items-center justify-between border-b border-white/5 bg-white/[0.02] backdrop-blur-xl z-10 absolute top-0 left-0 right-0">
+        <div className="flex items-center gap-2 cursor-pointer hover:bg-white/5 px-3 py-1.5 rounded-lg transition-colors">
+          <h3 className="text-white font-semibold text-lg flex items-center gap-2">
+            XERDOX <span className="text-purple-400">AI</span>
+          </h3>
+          <ChevronDown className="w-4 h-4 text-gray-400" />
         </div>
-        <div className="flex items-center gap-5 text-[#aebac1]">
-          <Video className="w-5 h-5 cursor-not-allowed opacity-30" />
-          <Phone className="w-5 h-5 cursor-not-allowed opacity-30" />
-          <div className="w-px h-6 bg-[#3b4a54]" />
-          <Search className="w-5 h-5 cursor-pointer hover:text-white" />
-          <MoreVertical className="w-5 h-5 cursor-pointer hover:text-white" />
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => setMessages([{
+              id: Date.now().toString(),
+              role: 'model',
+              text: "Hello! I'm XERDOX AI. How can I help you today?",
+              timestamp: new Date(),
+            }])}
+            className="text-sm text-gray-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5"
+          >
+            Clear Chat
+          </button>
+          <button 
+            onClick={onClose}
+            className="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center hover:bg-red-500/20 transition-colors border border-red-500/20"
+            title="Exit Xerdox AI"
+          >
+            <X className="w-4 h-4 text-red-500" />
+          </button>
         </div>
       </div>
 
       {/* Chat Area */}
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0b141a] relative"
-        style={{
-          backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")',
-          backgroundSize: '400px',
-          backgroundBlendMode: 'overlay'
-        }}
+        className="flex-1 overflow-y-auto p-6 pt-24 pb-32 space-y-8 scroll-smooth"
       >
-        <div className="flex justify-center mb-6">
-          <span className="bg-[#182229] text-[#8696a0] text-[11px] px-3 py-1 rounded-lg uppercase tracking-wider font-medium">
-            Today
-          </span>
-        </div>
-
         <AnimatePresence initial={false}>
           {messages.map((msg) => (
             <motion.div
               key={msg.id}
-              initial={{ opacity: 0, y: 10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
               className={cn(
-                "flex w-full",
+                "flex w-full gap-4 max-w-3xl mx-auto",
                 msg.role === 'user' ? "justify-end" : "justify-start"
               )}
             >
+              {msg.role === 'model' && (
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shrink-0 mt-1 shadow-[0_0_15px_rgba(139,92,246,0.3)]">
+                  <Sparkles className="w-4 h-4 text-white" />
+                </div>
+              )}
+              
               <div
                 className={cn(
-                  "max-w-[85%] rounded-lg p-2 relative shadow-sm",
+                  "relative max-w-[80%]",
                   msg.role === 'user' 
-                    ? "bg-[#005c4b] text-white rounded-tr-none" 
-                    : "bg-[#202c33] text-[#e9edef] rounded-tl-none"
+                    ? "bg-[#1a1a1a] border border-white/10 text-white rounded-2xl rounded-tr-sm px-5 py-3.5 shadow-lg" 
+                    : "text-gray-200 pt-1"
                 )}
               >
                 {msg.image && (
                   <img 
                     src={msg.image} 
                     alt="Uploaded" 
-                    className="rounded-md mb-2 max-w-full h-auto border border-white/10"
+                    className="rounded-xl mb-3 max-w-full h-auto border border-white/10 shadow-md"
                   />
                 )}
-                <div className="text-[14.2px] leading-relaxed break-words markdown-body">
+                <div className={cn(
+                  "text-[15px] leading-relaxed break-words markdown-body",
+                  msg.role === 'model' && "prose prose-invert max-w-none"
+                )}>
                   <ReactMarkdown 
                     remarkPlugins={[remarkMath]} 
                     rehypePlugins={[rehypeKatex]}
@@ -150,96 +167,89 @@ export const XerdoxAI = () => {
                     {msg.text}
                   </ReactMarkdown>
                 </div>
-                <div className="flex items-center justify-end gap-1 mt-1">
-                  <span className="text-[10px] text-[#8696a0]">
-                    {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                  {msg.role === 'user' && (
-                    <CheckCheck className="w-3.5 h-3.5 text-[#53bdeb]" />
-                  )}
-                </div>
-                
-                {/* Bubble Tail */}
-                <div className={cn(
-                  "absolute top-0 w-2 h-3",
-                  msg.role === 'user' 
-                    ? "-right-2 bg-[#005c4b] [clip-path:polygon(0_0,0_100%,100%_0)]" 
-                    : "-left-2 bg-[#202c33] [clip-path:polygon(100%_0,100%_100%,0_0)]"
-                )} />
               </div>
+
+              {msg.role === 'user' && (
+                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-1 border border-white/20">
+                  <User className="w-4 h-4 text-gray-300" />
+                </div>
+              )}
             </motion.div>
           ))}
         </AnimatePresence>
         
         {isLoading && (
-          <div className="flex justify-start">
-            <div className="bg-[#202c33] text-[#e9edef] rounded-lg rounded-tl-none p-3 shadow-sm">
-              <div className="flex gap-1">
-                <span className="w-1.5 h-1.5 bg-[#8696a0] rounded-full animate-bounce" />
-                <span className="w-1.5 h-1.5 bg-[#8696a0] rounded-full animate-bounce [animation-delay:0.2s]" />
-                <span className="w-1.5 h-1.5 bg-[#8696a0] rounded-full animate-bounce [animation-delay:0.4s]" />
-              </div>
+          <div className="flex w-full gap-4 max-w-3xl mx-auto justify-start">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shrink-0 mt-1 shadow-[0_0_15px_rgba(139,92,246,0.3)]">
+              <Sparkles className="w-4 h-4 text-white animate-pulse" />
+            </div>
+            <div className="pt-2 flex gap-1.5 items-center">
+              <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" />
+              <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce [animation-delay:0.2s]" />
+              <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce [animation-delay:0.4s]" />
             </div>
           </div>
         )}
       </div>
 
       {/* Input Area */}
-      <div className="bg-[#202c33] p-2 flex items-end gap-2">
-        <div className="flex items-center gap-2 mb-1 px-2">
-          <button className="text-[#8696a0] hover:text-white transition-colors">
-            <MoreVertical className="w-6 h-6 rotate-90" />
-          </button>
-          <button 
-            onClick={() => fileInputRef.current?.click()}
-            className="text-[#8696a0] hover:text-white transition-colors"
-          >
-            <Paperclip className="w-6 h-6" />
-          </button>
-        </div>
-
-        <div className="flex-1 bg-[#2a3942] rounded-lg flex flex-col overflow-hidden">
+      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/90 to-transparent pt-12">
+        <div className="max-w-3xl mx-auto relative">
           {selectedImage && (
-            <div className="p-2 bg-[#1f2c33] border-b border-white/5 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <ImageIcon className="w-4 h-4 text-neon-blue" />
-                <span className="text-xs text-gray-400">Image attached</span>
+            <div className="absolute bottom-full mb-4 left-0 p-2 bg-[#1a1a1a] border border-white/10 rounded-xl flex items-center gap-3 shadow-xl">
+              <div className="w-10 h-10 rounded-lg bg-black/50 overflow-hidden flex items-center justify-center">
+                <img src={selectedImage} alt="Preview" className="w-full h-full object-cover opacity-80" />
               </div>
+              <span className="text-xs text-gray-400 font-medium pr-2">Image attached</span>
               <button 
                 onClick={() => setSelectedImage(null)}
-                className="p-1 hover:bg-white/10 rounded-full"
+                className="p-1 hover:bg-white/10 rounded-full transition-colors mr-1"
               >
                 <X className="w-4 h-4 text-gray-400" />
               </button>
             </div>
           )}
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-              }
-            }}
-            placeholder="Type a message"
-            className="w-full bg-transparent text-[#e9edef] text-sm py-3 px-4 focus:outline-none resize-none max-h-32 min-h-[44px]"
-            rows={1}
-          />
-        </div>
+          
+          <div className="relative flex items-end gap-2 bg-[#1a1a1a] border border-white/10 rounded-2xl p-2 shadow-[0_10px_40px_rgba(0,0,0,0.5)] focus-within:border-purple-500/50 focus-within:shadow-[0_0_30px_rgba(139,92,246,0.15)] transition-all duration-300">
+            <button 
+              onClick={() => fileInputRef.current?.click()}
+              className="p-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors shrink-0"
+            >
+              <Paperclip className="w-5 h-5" />
+            </button>
 
-        <button 
-          onClick={handleSend}
-          disabled={isLoading || (!input.trim() && !selectedImage)}
-          className={cn(
-            "w-12 h-12 rounded-full flex items-center justify-center transition-all shrink-0 mb-0.5",
-            (input.trim() || selectedImage) 
-              ? "bg-[#00a884] text-white hover:bg-[#008f72]" 
-              : "bg-[#2a3942] text-[#8696a0]"
-          )}
-        >
-          <Send className="w-5 h-5 ml-0.5" />
-        </button>
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
+              placeholder="Message Xerdox AI..."
+              className="flex-1 bg-transparent text-white text-[15px] py-3 px-2 focus:outline-none resize-none max-h-48 min-h-[44px] placeholder-gray-500"
+              rows={1}
+            />
+
+            <button 
+              onClick={handleSend}
+              disabled={isLoading || (!input.trim() && !selectedImage)}
+              className={cn(
+                "p-3 rounded-xl flex items-center justify-center transition-all shrink-0",
+                (input.trim() || selectedImage) 
+                  ? "bg-white text-black hover:bg-gray-200 shadow-md" 
+                  : "bg-white/5 text-gray-500"
+              )}
+            >
+              <Send className="w-5 h-5" />
+            </button>
+          </div>
+          
+          <div className="text-center mt-3">
+            <p className="text-[11px] text-gray-500">Xerdox AI can make mistakes. Consider verifying important information.</p>
+          </div>
+        </div>
 
         <input 
           type="file" 
@@ -249,6 +259,6 @@ export const XerdoxAI = () => {
           accept="image/*"
         />
       </div>
-    </div>
+    </motion.div>
   );
 };

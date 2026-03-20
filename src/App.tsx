@@ -422,7 +422,7 @@ const AppContent = () => {
                     The world's most advanced study-buddy AI. Solve math, code, and learn complex concepts in seconds. ⚡
                   </p>
                 </div>
-                <XerdoxAI />
+                <XerdoxAI onClose={() => setActiveCategory('All')} />
               </div>
             ) : (
               <>

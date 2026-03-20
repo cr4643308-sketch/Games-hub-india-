@@ -4,18 +4,30 @@ import { useAuth } from '../contexts/AuthContext';
 import { ShieldAlert, Mail, Lock, User, ArrowRight, Sparkles } from 'lucide-react';
 
 export const AuthModal = () => {
-  const { user, isGuest, loading, authError, loginWithGoogle, skipLogin } = useAuth();
+  const { user, isGuest, loading, authError, loginWithGoogle, loginWithEmail, registerWithEmail, skipLogin } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (loading || user || isGuest) return null;
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Visual only for now, can be hooked up to Firebase later
-    alert('Email authentication coming soon! Please use Google Login.');
+    if (!email || !password) return;
+    
+    setIsSubmitting(true);
+    if (isLogin) {
+      await loginWithEmail(email, password);
+    } else {
+      if (!name) {
+        setIsSubmitting(false);
+        return;
+      }
+      await registerWithEmail(email, password, name);
+    }
+    setIsSubmitting(false);
   };
 
   return (
@@ -110,6 +122,7 @@ export const AuthModal = () => {
                       placeholder="Username"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                      required={!isLogin}
                       className="w-full bg-black/40 border border-white/10 rounded-xl py-3.5 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all"
                     />
                   </motion.div>
@@ -125,6 +138,7 @@ export const AuthModal = () => {
                   placeholder="Email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  required
                   className="w-full bg-black/40 border border-white/10 rounded-xl py-3.5 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all"
                 />
               </div>
@@ -138,6 +152,7 @@ export const AuthModal = () => {
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  required
                   className="w-full bg-black/40 border border-white/10 rounded-xl py-3.5 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all"
                 />
               </div>
@@ -152,12 +167,13 @@ export const AuthModal = () => {
 
               <button
                 type="submit"
-                className="w-full relative group overflow-hidden rounded-xl py-3.5 font-bold text-white shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] transition-all duration-300"
+                disabled={isSubmitting}
+                className="w-full relative group overflow-hidden rounded-xl py-3.5 font-bold text-white shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-90 group-hover:opacity-100 transition-opacity" />
                 <span className="relative z-10 flex items-center justify-center gap-2">
-                  {isLogin ? 'Sign In' : 'Create Account'}
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  {isSubmitting ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
+                  {!isSubmitting && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
                 </span>
               </button>
             </form>
@@ -169,6 +185,7 @@ export const AuthModal = () => {
             </div>
 
             <button
+              type="button"
               onClick={loginWithGoogle}
               className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium py-3.5 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 mb-6"
             >
@@ -178,6 +195,7 @@ export const AuthModal = () => {
 
             <div className="text-center">
               <button
+                type="button"
                 onClick={skipLogin}
                 className="text-sm text-gray-500 hover:text-white transition-colors underline decoration-white/20 underline-offset-4"
               >

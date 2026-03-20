@@ -2,12 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { db } from '../firebase';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { Coins, PlaySquare, LayoutGrid, Calendar, CheckCircle } from 'lucide-react';
+import { Coins, PlaySquare, LayoutGrid, Calendar, CheckCircle, X } from 'lucide-react';
+
+const AI_ADS = [
+  { name: 'ChatGPT', desc: 'The ultimate AI assistant for writing and coding.', img: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Midjourney', desc: 'Create breathtaking AI art in seconds.', img: 'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Claude', desc: 'Next-generation AI for complex reasoning.', img: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Gemini', desc: 'Google\'s most capable AI model yet.', img: 'https://images.unsplash.com/photo-1697577418970-95d99b5a55cf?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Perplexity', desc: 'The AI search engine that gives you direct answers.', img: 'https://images.unsplash.com/photo-1676299081847-824916de030a?auto=format&fit=crop&w=800&q=80' }
+];
 
 export const EarnCoins = () => {
-  const { user, profile, addCoins, claimEvent } = useAuth();
+  const { user, profile, isGuest, addCoins, claimEvent } = useAuth();
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Ad Modal State
+  const [showAd, setShowAd] = useState(false);
+  const [adTimeLeft, setAdTimeLeft] = useState(0);
+  const [currentAd, setCurrentAd] = useState(AI_ADS[0]);
+  const [currentReward, setCurrentReward] = useState(0);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -23,22 +37,40 @@ export const EarnCoins = () => {
     fetchEvents();
   }, []);
 
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (showAd && adTimeLeft > 0) {
+      timer = setTimeout(() => setAdTimeLeft(prev => prev - 1), 1000);
+    } else if (showAd && adTimeLeft === 0) {
+      // Ad finished
+      addCoins(currentReward);
+      setShowAd(false);
+      alert(`Ad completed! You earned ${currentReward} GHI Coins!`);
+    }
+    return () => clearTimeout(timer);
+  }, [showAd, adTimeLeft, currentReward, addCoins]);
+
   const handleWatchAd = (type: 'short' | 'long') => {
-    if (!user) {
-      alert("Please sign in to earn GHI Coins!");
+    if (!user && !isGuest) {
+      alert("Please sign in or continue as guest to earn GHI Coins!");
       return;
     }
+    
+    // Pick a random AI ad
+    const randomAd = AI_ADS[Math.floor(Math.random() * AI_ADS.length)];
+    setCurrentAd(randomAd);
+    
     const reward = type === 'short' ? 30 : 60;
-    alert(`Watching ${type} ad... (Simulated)`);
-    setTimeout(() => {
-      addCoins(reward);
-      alert(`You earned ${reward} GHI Coins!`);
-    }, 2000);
+    const duration = type === 'short' ? 5 : 10; // Shortened for demo purposes (5s/10s)
+    
+    setCurrentReward(reward);
+    setAdTimeLeft(duration);
+    setShowAd(true);
   };
 
   const handlePlayGameReward = () => {
-    if (!user) {
-      alert("Please sign in to earn GHI Coins!");
+    if (!user && !isGuest) {
+      alert("Please sign in or continue as guest to earn GHI Coins!");
       return;
     }
     const reward = Math.floor(Math.random() * (150 - 30 + 1)) + 30;
@@ -50,8 +82,8 @@ export const EarnCoins = () => {
   };
 
   const handleClaimEvent = async (eventId: string, rewardAmount: number) => {
-    if (!user) {
-      alert("Please sign in to claim event rewards!");
+    if (!user && !isGuest) {
+      alert("Please sign in or continue as guest to claim event rewards!");
       return;
     }
     try {
@@ -64,7 +96,39 @@ export const EarnCoins = () => {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 relative">
+      {/* Ad Modal */}
+      {showAd && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
+          <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl relative">
+            {/* Ad Header */}
+            <div className="absolute top-4 right-4 z-10 flex items-center gap-4">
+              <div className="bg-black/60 backdrop-blur-md px-4 py-1.5 rounded-full text-white font-bold border border-white/10">
+                Reward in: {adTimeLeft}s
+              </div>
+              {adTimeLeft === 0 && (
+                <button onClick={() => setShowAd(false)} className="bg-black/60 p-2 rounded-full hover:bg-white/10 transition">
+                  <X className="w-5 h-5 text-white" />
+                </button>
+              )}
+            </div>
+            
+            {/* Ad Content */}
+            <div className="relative h-[400px] w-full">
+              <img src={currentAd.img} alt={currentAd.name} className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent flex flex-col justify-end p-8">
+                <span className="text-purple-400 font-bold tracking-wider text-sm uppercase mb-2">Sponsored AI Tool</span>
+                <h2 className="text-4xl font-black text-white mb-2">{currentAd.name}</h2>
+                <p className="text-gray-300 text-lg max-w-lg">{currentAd.desc}</p>
+                <button className="mt-6 bg-white text-black font-bold py-3 px-8 rounded-xl w-max hover:bg-gray-200 transition">
+                  Try {currentAd.name} Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center gap-4 mb-8">
         <div className="w-12 h-12 bg-purple-600/20 rounded-xl flex items-center justify-center border border-purple-500/30">
           <Coins className="w-6 h-6 text-yellow-400" />

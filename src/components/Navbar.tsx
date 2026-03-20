@@ -43,7 +43,7 @@ export const Navbar = () => {
           
           <div className="flex items-center gap-2">
             {/* GHI Coins Display - Top Right */}
-            {user && profile && (
+            {(user || isGuest) && profile && (
               <motion.div 
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
