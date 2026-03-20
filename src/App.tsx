@@ -18,6 +18,7 @@ const AppContent = () => {
   const { user, profile, spendCoins } = useAuth();
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [sessionStarted, setSessionStarted] = useState(false);
   const [showApplication, setShowApplication] = useState(false);
@@ -28,6 +29,57 @@ const AppContent = () => {
     const matchesSearch = g.title.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
+
+  const searchResults = React.useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const query = searchQuery.toLowerCase();
+    const results = [];
+    
+    // Check Xerdox AI
+    if ('xerdox ai study'.includes(query)) {
+      results.push({
+        type: 'ai',
+        title: 'XERDOX STUDY AI',
+        description: 'Advanced study-buddy AI',
+        icon: <Zap className="w-6 h-6 text-neon-purple" />
+      });
+    }
+
+    // Check Earn Coins
+    if ('earn coins rewards money'.includes(query)) {
+      results.push({
+        type: 'earn',
+        title: 'Earn Coins',
+        description: 'Watch ads and complete tasks to earn GHI Coins',
+        icon: <Coins className="w-6 h-6 text-yellow-400" />
+      });
+    }
+
+    // Check Admin Panel
+    if ('admin panel dashboard settings'.includes(query)) {
+      results.push({
+        type: 'admin',
+        title: 'Admin Panel',
+        description: 'Manage games, users, and platform settings',
+        icon: <Shield className="w-6 h-6 text-red-500" />
+      });
+    }
+    
+    // Check Games
+    GAMES.forEach(g => {
+      if (g.title.toLowerCase().includes(query) || g.category.toLowerCase().includes(query) || g.tags.some(t => t.toLowerCase().includes(query))) {
+        results.push({
+          type: 'game',
+          game: g,
+          title: g.title,
+          description: `${g.category} • ${g.isFree ? 'Free' : `${g.price} GHI`}`,
+          icon: <Gamepad2 className="w-6 h-6 text-neon-blue" />
+        });
+      }
+    });
+    
+    return results;
+  }, [searchQuery]);
 
   const handleStartSession = async () => {
     if (!selectedGame) return;
@@ -110,24 +162,79 @@ const AppContent = () => {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.8, delay: 0.4 }}
-                  className="w-full max-w-2xl relative"
+                  className="w-full max-w-2xl relative group"
                 >
-                  <div className="absolute inset-0 bg-neon-blue/20 blur-xl rounded-full" />
-                  <div className="relative flex items-center bg-white/10 backdrop-blur-xl border border-white/20 rounded-full p-2 shadow-2xl">
-                    <div className="pl-4 pr-2 text-neon-blue">
-                      <Search className="w-6 h-6" />
+                  {/* Glowing Background Blur */}
+                  <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-neon-blue rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
+                  
+                  {/* Search Box Container */}
+                  <div className="relative flex items-center bg-[#0a0a0a]/80 backdrop-blur-2xl border border-white/10 rounded-full p-2 shadow-[0_0_40px_rgba(139,92,246,0.1)]">
+                    <div className="pl-5 pr-3 flex items-center justify-center">
+                      <Search className="w-6 h-6 text-purple-400 group-focus-within:text-neon-blue transition-colors duration-300" />
                     </div>
+                    
                     <input 
                       type="text" 
                       placeholder="Search for hosted games, servers, or tools..." 
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="flex-1 bg-transparent border-none text-white placeholder-gray-400 focus:outline-none px-4 py-3 text-lg font-medium"
+                      onFocus={() => setIsSearchFocused(true)}
+                      onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+                      className="flex-1 bg-transparent border-none text-white placeholder-gray-500 focus:outline-none px-2 py-3 text-lg font-medium w-full"
                     />
-                    <button className="bg-neon-blue text-black px-8 py-3 rounded-full font-bold hover:bg-white transition-colors">
-                      FIND
+                    
+                    <button className="relative overflow-hidden rounded-full px-8 py-3 font-bold text-white shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_30px_rgba(0,240,255,0.4)] transition-all duration-300 transform hover:scale-105 group/btn">
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-neon-blue opacity-90 group-hover/btn:opacity-100 transition-opacity" />
+                      <span className="relative z-10 tracking-wider">FIND</span>
                     </button>
                   </div>
+
+                  {/* Search Results Dropdown */}
+                  <AnimatePresence>
+                    {isSearchFocused && searchQuery.trim().length > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="absolute top-full left-0 right-0 mt-4 bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_10px_40px_rgba(139,92,246,0.15)] overflow-hidden z-50 max-h-96 overflow-y-auto"
+                      >
+                        {searchResults.length > 0 ? (
+                          searchResults.map((result, idx) => (
+                            <div
+                              key={idx}
+                              onMouseDown={(e) => {
+                                e.preventDefault();
+                                if (result.type === 'ai') {
+                                  setActiveCategory('XERDOX AI');
+                                } else if (result.type === 'game' && result.game) {
+                                  setSelectedGame(result.game);
+                                } else if (result.type === 'earn') {
+                                  setActiveCategory('Earn Coins');
+                                } else if (result.type === 'admin') {
+                                  setActiveCategory('Admin Panel');
+                                }
+                                setSearchQuery('');
+                                setIsSearchFocused(false);
+                              }}
+                              className="flex items-center gap-4 p-4 hover:bg-white/5 cursor-pointer transition-colors border-b border-white/5 last:border-none"
+                            >
+                              <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center shrink-0">
+                                {result.icon}
+                              </div>
+                              <div>
+                                <h4 className="text-white font-bold">{result.title}</h4>
+                                <p className="text-gray-400 text-sm">{result.description}</p>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="p-6 text-center text-gray-400">
+                            No results found for "{searchQuery}"
+                          </div>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </motion.div>
               </div>
             </section>
