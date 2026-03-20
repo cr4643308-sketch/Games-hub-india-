@@ -1,12 +1,16 @@
 @import "tailwindcss";
 @import "katex/dist/katex.min.css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;700;900&display=swap');
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --color-saffron: #FF9933;
-  --color-epic-black: #121212;
-  --color-epic-gray: #202020;
-  --color-epic-light: #2a2a2a;
+  --font-orbitron: "Orbitron", sans-serif;
+  --color-epic-black: #0f0f13;
+  --color-epic-gray: #1a1a24;
+  --color-epic-light: #252533;
+  --color-neon-blue: #00f0ff;
+  --color-neon-purple: #b026ff;
+  --color-cyber-dark: #0f0f13;
   
   @keyframes fadeIn {
     from { opacity: 0; }
@@ -18,18 +22,112 @@
   body {
     @apply bg-epic-black text-white font-sans antialiased;
   }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-orbitron tracking-wide;
+  }
 }
 
 .glass-panel {
   @apply bg-white/5 backdrop-blur-md border border-white/10;
 }
 
-.saffron-glow {
-  box-shadow: 0 0 20px rgba(255, 153, 51, 0.3);
+.neon-glow-blue {
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.5), inset 0 0 10px rgba(0, 240, 255, 0.2);
+}
+
+.neon-glow-purple {
+  box-shadow: 0 0 15px rgba(176, 38, 255, 0.5), inset 0 0 10px rgba(176, 38, 255, 0.2);
 }
 
 .epic-card {
   @apply transition-all duration-300 hover:scale-[1.02] hover:bg-epic-light cursor-pointer rounded-lg overflow-hidden;
+}
+
+/* Glitch Effect */
+.glitch-wrapper {
+  position: relative;
+}
+
+.glitch {
+  position: relative;
+  color: #FFD700;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-epic-black);
+}
+
+.glitch::before {
+  left: 2px;
+  text-shadow: -2px 0 #00f0ff;
+  clip: rect(24px, 550px, 90px, 0);
+  animation: glitch-anim-2 3s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+  left: -2px;
+  text-shadow: -2px 0 #b026ff;
+  clip: rect(85px, 550px, 140px, 0);
+  animation: glitch-anim 2.5s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+  0% { clip: rect(10px, 9999px, 86px, 0); }
+  5% { clip: rect(62px, 9999px, 81px, 0); }
+  10% { clip: rect(15px, 9999px, 12px, 0); }
+  15% { clip: rect(84px, 9999px, 10px, 0); }
+  20% { clip: rect(74px, 9999px, 35px, 0); }
+  25% { clip: rect(18px, 9999px, 92px, 0); }
+  30% { clip: rect(68px, 9999px, 20px, 0); }
+  35% { clip: rect(9px, 9999px, 66px, 0); }
+  40% { clip: rect(41px, 9999px, 98px, 0); }
+  45% { clip: rect(69px, 9999px, 3px, 0); }
+  50% { clip: rect(29px, 9999px, 82px, 0); }
+  55% { clip: rect(81px, 9999px, 45px, 0); }
+  60% { clip: rect(14px, 9999px, 77px, 0); }
+  65% { clip: rect(93px, 9999px, 11px, 0); }
+  70% { clip: rect(3px, 9999px, 61px, 0); }
+  75% { clip: rect(52px, 9999px, 89px, 0); }
+  80% { clip: rect(22px, 9999px, 34px, 0); }
+  85% { clip: rect(88px, 9999px, 55px, 0); }
+  90% { clip: rect(46px, 9999px, 23px, 0); }
+  95% { clip: rect(77px, 9999px, 94px, 0); }
+  100% { clip: rect(33px, 9999px, 42px, 0); }
+}
+
+@keyframes glitch-anim-2 {
+  0% { clip: rect(65px, 9999px, 100px, 0); }
+  5% { clip: rect(52px, 9999px, 74px, 0); }
+  10% { clip: rect(79px, 9999px, 85px, 0); }
+  15% { clip: rect(75px, 9999px, 5px, 0); }
+  20% { clip: rect(67px, 9999px, 61px, 0); }
+  25% { clip: rect(14px, 9999px, 79px, 0); }
+  30% { clip: rect(1px, 9999px, 66px, 0); }
+  35% { clip: rect(86px, 9999px, 30px, 0); }
+  40% { clip: rect(23px, 9999px, 98px, 0); }
+  45% { clip: rect(85px, 9999px, 72px, 0); }
+  50% { clip: rect(71px, 9999px, 75px, 0); }
+  55% { clip: rect(2px, 9999px, 48px, 0); }
+  60% { clip: rect(30px, 9999px, 16px, 0); }
+  65% { clip: rect(59px, 9999px, 50px, 0); }
+  70% { clip: rect(41px, 9999px, 62px, 0); }
+  75% { clip: rect(2px, 9999px, 82px, 0); }
+  80% { clip: rect(47px, 9999px, 73px, 0); }
+  85% { clip: rect(3px, 9999px, 27px, 0); }
+  90% { clip: rect(26px, 9999px, 55px, 0); }
+  95% { clip: rect(42px, 9999px, 97px, 0); }
+  100% { clip: rect(38px, 9999px, 49px, 0); }
 }
 
 /* Custom scrollbar */

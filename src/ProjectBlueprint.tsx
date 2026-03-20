@@ -7,8 +7,8 @@ export const ProjectBlueprint = () => {
     <div className="py-20 border-t border-white/5">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center gap-4 mb-12">
-          <div className="w-12 h-12 bg-saffron/10 rounded-xl flex items-center justify-center">
-            <Info className="w-6 h-6 text-saffron" />
+          <div className="w-12 h-12 bg-neon-blue/10 rounded-xl flex items-center justify-center">
+            <Info className="w-6 h-6 text-neon-blue" />
           </div>
           <div>
             <h2 className="text-3xl font-black">PROJECT BLUEPRINT</h2>
@@ -19,15 +19,15 @@ export const ProjectBlueprint = () => {
         <div className="space-y-12">
           <section>
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Layers className="w-5 h-5 text-saffron" />
+              <Layers className="w-5 h-5 text-neon-blue" />
               1. Brand Identity & Theme
             </h3>
             <div className="glass-panel p-6 rounded-2xl space-y-4">
               <p className="text-gray-300 leading-relaxed">
-                <strong className="text-white">Aesthetic:</strong> Immersive Dark Mode utilizing <code className="text-saffron">#121212</code> (Epic Black) as the foundation.
+                <strong className="text-white">Aesthetic:</strong> Immersive Dark Mode utilizing <code className="text-neon-blue">#121212</code> (Epic Black) as the foundation.
               </p>
               <p className="text-gray-300 leading-relaxed">
-                <strong className="text-white">Accent:</strong> <span className="text-saffron font-bold">Vibrant Saffron</span> (#FF9933) representing the energy and heritage of India, used for primary CTAs and critical UI highlights.
+                <strong className="text-white">Accent:</strong> <span className="text-neon-blue font-bold">Neon Blue</span> (#00f0ff) and <span className="text-neon-purple font-bold">Neon Purple</span> (#b026ff) representing the futuristic cyber-dark aesthetic, used for primary CTAs and critical UI highlights.
               </p>
               <p className="text-gray-300 leading-relaxed">
                 <strong className="text-white">Typography:</strong> <span className="font-sans">Inter</span> for high legibility in UI, paired with <span className="font-black">Black Weights</span> for dramatic headings to create a premium, authoritative feel.
@@ -37,7 +37,7 @@ export const ProjectBlueprint = () => {
 
           <section>
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Cpu className="w-5 h-5 text-saffron" />
+              <Cpu className="w-5 h-5 text-neon-blue" />
               2. Platform Architecture
             </h3>
             <div className="grid md:grid-cols-2 gap-4">
@@ -62,13 +62,13 @@ export const ProjectBlueprint = () => {
 
           <section>
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Zap className="w-5 h-5 text-saffron" />
+              <Zap className="w-5 h-5 text-neon-blue" />
               3. Technical Implementation
             </h3>
             <div className="glass-panel p-6 rounded-2xl space-y-4">
               <div className="flex gap-4">
                 <div className="w-10 h-10 shrink-0 bg-white/5 rounded-lg flex items-center justify-center">
-                  <Globe className="w-5 h-5 text-saffron" />
+                  <Globe className="w-5 h-5 text-neon-blue" />
                 </div>
                 <div>
                   <h4 className="font-bold">Games & AI Tools</h4>
@@ -82,13 +82,13 @@ export const ProjectBlueprint = () => {
 
           <section>
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Shield className="w-5 h-5 text-saffron" />
+              <Shield className="w-5 h-5 text-neon-blue" />
               4. Monetization & Security
             </h3>
             <div className="glass-panel p-6 rounded-2xl">
               <div className="grid grid-cols-2 gap-8">
                 <div>
-                  <h4 className="font-bold text-sm uppercase text-saffron mb-3">Revenue Models</h4>
+                  <h4 className="font-bold text-sm uppercase text-neon-blue mb-3">Revenue Models</h4>
                   <ul className="text-sm text-gray-400 space-y-2">
                     <li>• Hub+ Premium Subscription</li>
                     <li>• Pay-per-play (Cloud Credits)</li>
@@ -96,7 +96,7 @@ export const ProjectBlueprint = () => {
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm uppercase text-saffron mb-3">Performance</h4>
+                  <h4 className="font-bold text-sm uppercase text-neon-blue mb-3">Performance</h4>
                   <ul className="text-sm text-gray-400 space-y-2">
                     <li>• Edge Computing (India Nodes)</li>
                     <li>• Adaptive Bitrate Streaming</li>

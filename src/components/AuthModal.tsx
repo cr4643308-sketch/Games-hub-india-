@@ -23,11 +23,11 @@ export const AuthModal = () => {
           className="bg-epic-black border border-white/10 rounded-2xl max-w-md w-full overflow-hidden shadow-2xl"
         >
           <div className="p-8 text-center">
-            <div className="w-16 h-16 bg-saffron/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-saffron/20">
-              <LogIn className="w-8 h-8 text-saffron" />
+            <div className="w-16 h-16 bg-neon-blue/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-neon-blue/20 shadow-[0_0_15px_rgba(0,240,255,0.2)]">
+              <LogIn className="w-8 h-8 text-neon-blue" />
             </div>
             
-            <h2 className="text-3xl font-black mb-2">Welcome to <span className="text-saffron">GHI</span></h2>
+            <h2 className="text-3xl font-black mb-2">Welcome to <span className="text-neon-blue drop-shadow-[0_0_10px_rgba(0,240,255,0.5)]">GHI</span></h2>
             <p className="text-gray-400 mb-8">
               Sign in to earn GHI Coins, save your progress, and unlock premium games.
             </p>

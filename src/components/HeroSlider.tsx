@@ -127,7 +127,7 @@ export const HeroSlider = () => {
                   </>
                 ) : (
                   <>
-                    <span className="text-saffron font-bold text-sm tracking-widest uppercase mb-4 block">Featured Release</span>
+                    <span className="text-neon-blue font-bold text-sm tracking-widest uppercase mb-4 block">Featured Release</span>
                     <h1 className="text-6xl font-black mb-4 leading-tight">{featured[current].title}</h1>
                     <p className="text-gray-300 text-lg mb-8 line-clamp-2">
                       Experience the next generation of {featured[current].category.toLowerCase()} directly in your browser. No downloads, just pure performance.
@@ -136,7 +136,7 @@ export const HeroSlider = () => {
                 )}
                 
                 <div className="flex flex-wrap items-center gap-4 mb-12">
-                  <button className={`text-black px-10 py-5 rounded-lg font-black text-lg flex items-center gap-3 transition-all hover:scale-105 shadow-xl ${isMinecraft ? 'bg-purple-500 hover:bg-purple-400 text-white shadow-purple-500/20' : 'bg-white hover:bg-saffron'}`}>
+                  <button className={`text-black px-10 py-5 rounded-lg font-black text-lg flex items-center gap-3 transition-all hover:scale-105 shadow-xl ${isMinecraft ? 'bg-purple-500 hover:bg-purple-400 text-white shadow-purple-500/20' : 'bg-white hover:bg-neon-blue'}`}>
                     <Play className={`w-6 h-6 ${isMinecraft ? 'fill-white' : 'fill-current'}`} />
                     PLAY NOW
                   </button>

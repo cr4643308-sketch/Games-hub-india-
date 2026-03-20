@@ -110,9 +110,9 @@ export const EarnCoins = () => {
         </div>
 
         {/* Games Section */}
-        <div className="bg-epic-gray rounded-2xl p-6 border border-white/5 hover:border-saffron/30 transition-colors">
+        <div className="bg-epic-gray rounded-2xl p-6 border border-white/5 hover:border-neon-blue/30 transition-colors shadow-[0_0_15px_rgba(0,240,255,0.05)] hover:shadow-[0_0_20px_rgba(0,240,255,0.15)]">
           <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <LayoutGrid className="w-5 h-5 text-saffron" /> Play & Earn
+            <LayoutGrid className="w-5 h-5 text-neon-blue" /> Play & Earn
           </h3>
           <p className="text-sm text-gray-400 mb-6">Play these specific games to earn a random amount of GHI Coins (30 - 150).</p>
           <div className="space-y-4">

@@ -104,7 +104,7 @@ export const AdminDashboard = () => {
         {/* Event Management - Both Owner & Manager */}
         <div className="bg-epic-gray rounded-2xl p-6 border border-white/5">
           <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-saffron" />
+            <Calendar className="w-5 h-5 text-neon-blue" />
             Create Event
           </h2>
           <form onSubmit={handleCreateEvent} className="space-y-4">
@@ -115,7 +115,7 @@ export const AdminDashboard = () => {
                 required
                 value={newEvent.title}
                 onChange={e => setNewEvent({...newEvent, title: e.target.value})}
-                className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-white focus:ring-1 focus:ring-saffron"
+                className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-white focus:ring-1 focus:ring-neon-blue"
               />
             </div>
             <div>
@@ -124,7 +124,7 @@ export const AdminDashboard = () => {
                 required
                 value={newEvent.description}
                 onChange={e => setNewEvent({...newEvent, description: e.target.value})}
-                className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-white focus:ring-1 focus:ring-saffron h-24"
+                className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-white focus:ring-1 focus:ring-neon-blue h-24"
               />
             </div>
             <div>
@@ -134,10 +134,10 @@ export const AdminDashboard = () => {
                 required min="1"
                 value={newEvent.rewardAmount}
                 onChange={e => setNewEvent({...newEvent, rewardAmount: Number(e.target.value)})}
-                className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-white focus:ring-1 focus:ring-saffron"
+                className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-white focus:ring-1 focus:ring-neon-blue"
               />
             </div>
-            <button type="submit" className="w-full bg-saffron text-black font-bold py-3 rounded-lg hover:bg-yellow-500 transition-colors flex items-center justify-center gap-2">
+            <button type="submit" className="w-full bg-neon-blue text-black font-bold py-3 rounded-lg hover:bg-white transition-colors flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(0,240,255,0.4)]">
               <Plus className="w-4 h-4" /> CREATE EVENT
             </button>
           </form>
@@ -203,7 +203,7 @@ export const AdminDashboard = () => {
               <div key={event.id} className="bg-black/40 border border-white/10 rounded-xl p-4">
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="font-bold text-lg">{event.title}</h3>
-                  <span className="bg-saffron/20 text-saffron text-xs font-bold px-2 py-1 rounded">
+                  <span className="bg-neon-blue/20 text-neon-blue text-xs font-bold px-2 py-1 rounded">
                     +{event.rewardAmount} GHI
                   </span>
                 </div>

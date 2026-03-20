@@ -83,8 +83,8 @@ export const XerdoxAI = () => {
       {/* WhatsApp Header */}
       <div className="bg-[#202c33] px-4 py-3 flex items-center justify-between shadow-md z-10">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-saffron/20 flex items-center justify-center border border-saffron/30">
-            <User className="w-6 h-6 text-saffron" />
+          <div className="w-10 h-10 rounded-full bg-neon-blue/20 flex items-center justify-center border border-neon-blue/30">
+            <User className="w-6 h-6 text-neon-blue" />
           </div>
           <div>
             <h3 className="text-white font-bold text-sm">XERDOX AI ⚡</h3>
@@ -202,7 +202,7 @@ export const XerdoxAI = () => {
           {selectedImage && (
             <div className="p-2 bg-[#1f2c33] border-b border-white/5 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <ImageIcon className="w-4 h-4 text-saffron" />
+                <ImageIcon className="w-4 h-4 text-neon-blue" />
                 <span className="text-xs text-gray-400">Image attached</span>
               </div>
               <button 
