@@ -4,11 +4,7 @@ import { Play, Circle } from 'lucide-react';
 
 const GAMES = [
   { id: 1, title: 'Minecraft Enhanced', image: 'https://images.unsplash.com/photo-1607853202273-797f1c22a38e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
-  { id: 2, title: 'AI Battleground', image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
-  { id: 3, title: 'Cyber Drift', image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
-  { id: 4, title: 'Neon Syndicate', image: 'https://images.unsplash.com/photo-1605901309584-818e25960b8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
-  { id: 5, title: 'Quantum Realm', image: 'https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
-  { id: 6, title: 'Stellar Frontiers', image: 'https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { id: 2, title: 'Xerdox AI', image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
 ];
 
 export default function App() {
