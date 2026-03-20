@@ -1,492 +1,149 @@
-import React, { useState } from 'react';
-import { Navbar } from './components/Navbar';
-import { GameCard } from './components/GameCard';
-import { ProjectBlueprint } from './ProjectBlueprint';
-import { XerdoxAI } from './components/XerdoxAI';
-import { ApplicationBeta } from './components/ApplicationBeta';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { AuthModal } from './components/AuthModal';
-import { AdminDashboard } from './components/AdminDashboard';
-import { EarnCoins } from './components/EarnCoins';
-import { GAMES, Game } from './constants';
-import { ChevronRight, LayoutGrid, List, X, Maximize2, Settings, MessageSquare, Power, ShoppingBag, Coins, PlaySquare, Calendar, Shield, Sparkles, Search, Users, Sword, Zap, Gamepad2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import React from 'react';
+import { motion } from 'motion/react';
+import { Play, Circle } from 'lucide-react';
 
-import { MinecraftPlayer } from './components/MinecraftPlayer';
-
-const AppContent = () => {
-  const { user, profile, spendCoins } = useAuth();
-  const [activeCategory, setActiveCategory] = useState<string>('All');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  const [sessionStarted, setSessionStarted] = useState(false);
-  const [showApplication, setShowApplication] = useState(false);
-  const categories = ['All', 'Action', 'RPG', 'Indie', 'XERDOX AI'];
-
-  const filteredGames = GAMES.filter(g => {
-    const matchesCategory = activeCategory === 'All' || g.category === activeCategory;
-    const matchesSearch = g.title.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
-
-  const handleStartSession = async () => {
-    if (!selectedGame) return;
-    
-    if (selectedGame.isFree) {
-      setSessionStarted(true);
-      return;
-    }
-
-    if (!user) {
-      alert("Please sign in to play premium games!");
-      return;
-    }
-
-    const discountedPrice = selectedGame.discount 
-      ? selectedGame.price * (1 - selectedGame.discount / 100) 
-      : selectedGame.price;
-
-    const success = await spendCoins(discountedPrice);
-    if (success) {
-      setSessionStarted(true);
-    } else {
-      alert(`Not enough GHI Coins! You need ${discountedPrice} coins to play this game.`);
-    }
-  };
-
-  const closeGame = () => {
-    setSelectedGame(null);
-    setSessionStarted(false);
-  };
-
-  return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <AuthModal />
-      
-      <main className="flex-1 max-w-[1600px] mx-auto w-full px-6 py-8">
-        {/* Hero Section */}
-        {activeCategory !== 'XERDOX AI' && activeCategory !== 'Admin Panel' && activeCategory !== 'Earn Coins' && (
-          <>
-            <section className="mb-16 relative rounded-3xl overflow-hidden bg-cyber-dark border border-white/10 shadow-2xl">
-              <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-20 mix-blend-luminosity" />
-              <div className="absolute inset-0 bg-gradient-to-t from-cyber-dark via-cyber-dark/80 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-neon-blue/10 to-neon-purple/10" />
-              
-              <div className="relative z-10 px-8 py-24 md:py-32 flex flex-col items-center justify-center text-center">
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                >
-                  <motion.h1 
-                    animate={{ 
-                      rotateX: [10, -5, 10],
-                      rotateY: [-5, 5, -5],
-                      y: [-5, 5, -5]
-                    }}
-                    transition={{
-                      duration: 6,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                    className="text-5xl md:text-7xl lg:text-8xl font-black mb-6 tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-neon-blue via-white to-neon-purple drop-shadow-[0_0_30px_rgba(0,240,255,0.5)]" 
-                    style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}
-                  >
-                    GAMES HUB INDIA
-                  </motion.h1>
-                </motion.div>
-                
-                <motion.p 
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
-                  className="text-xl md:text-2xl text-gray-300 font-medium mb-12 max-w-2xl"
-                >
-                  The ultimate nexus for high-performance gaming and next-gen experiences.
-                </motion.p>
-
-                <motion.div 
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.4 }}
-                  className="w-full max-w-2xl relative"
-                >
-                  <div className="absolute inset-0 bg-neon-blue/20 blur-xl rounded-full" />
-                  <div className="relative flex items-center bg-white/10 backdrop-blur-xl border border-white/20 rounded-full p-2 shadow-2xl">
-                    <div className="pl-4 pr-2 text-neon-blue">
-                      <Search className="w-6 h-6" />
-                    </div>
-                    <input 
-                      type="text" 
-                      placeholder="Search for hosted games, servers, or tools..." 
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="flex-1 bg-transparent border-none text-white placeholder-gray-400 focus:outline-none px-4 py-3 text-lg font-medium"
-                    />
-                    <button className="bg-neon-blue text-black px-8 py-3 rounded-full font-bold hover:bg-white transition-colors">
-                      FIND
-                    </button>
-                  </div>
-                </motion.div>
-              </div>
-            </section>
-
-            {/* Founder Section */}
-            {activeCategory === 'All' && (
-              <section className="mb-16">
-                <div className="relative overflow-hidden rounded-3xl bg-epic-gray border border-white/5 p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/10 blur-3xl rounded-full" />
-                  <div className="relative z-10 flex-1">
-                    <div className="inline-flex items-center gap-2 bg-yellow-500/10 text-yellow-500 px-3 py-1 rounded-full text-xs font-bold mb-4 border border-yellow-500/20">
-                      <Users className="w-4 h-4" />
-                      INNOVATORS
-                    </div>
-                    <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-300">
-                      Visionary Leadership
-                    </h2>
-                    <p className="text-gray-400 max-w-xl">
-                      Pushing the boundaries of web-based gaming and community experiences. Join us in building the future of interactive entertainment.
-                    </p>
-                  </div>
-                  <div className="relative z-10 flex flex-col items-center md:items-end">
-                    <div className="glitch-wrapper">
-                      <div className="glitch text-4xl md:text-6xl" data-text="FOUNDER - RAVI">
-                        FOUNDER - RAVI
-                      </div>
-                    </div>
-                    <div className="mt-4 text-neon-blue font-mono text-sm tracking-widest uppercase flex items-center gap-2">
-                      <div className="w-2 h-2 bg-neon-blue rounded-full animate-pulse" />
-                      System Architect
-                    </div>
-                  </div>
-                </div>
-              </section>
-            )}
-
-            {/* Application Beta Section */}
-            {activeCategory === 'All' && (
-              <section className="mb-16">
-                <div className="relative overflow-hidden rounded-3xl bg-epic-black border border-neon-purple/30 p-8 md:p-12 flex flex-col items-center justify-center text-center neon-glow-purple">
-                  <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/10 to-transparent" />
-                  <div className="relative z-10">
-                    <h2 className="text-3xl md:text-4xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-neon-purple to-neon-blue">
-                      JOIN THE ELITE RANKS
-                    </h2>
-                    <p className="text-gray-300 mb-8 max-w-xl mx-auto">
-                      Apply now for the exclusive Application Beta and get early access to our premium servers and features.
-                    </p>
-                    <button 
-                      onClick={() => setShowApplication(true)}
-                      className="relative group overflow-hidden rounded-full px-12 py-5 font-black text-xl text-white shadow-[0_0_30px_rgba(176,38,255,0.3)] hover:shadow-[0_0_50px_rgba(0,240,255,0.5)] transition-all duration-500 transform hover:scale-105"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-neon-purple via-neon-blue to-neon-purple bg-[length:200%_auto] animate-[gradient_3s_linear_infinite]" />
-                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
-                      <span className="relative z-10 tracking-wider text-white drop-shadow-md">
-                        FILL APPLICATION
-                      </span>
-                    </button>
-                  </div>
-                </div>
-              </section>
-            )}
-          </>
-        )}
-
-        {/* Store Navigation */}
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar */}
-          <aside className="w-full lg:w-64 shrink-0 space-y-8">
-            <div className="glass-panel p-6 rounded-2xl">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Network Status</h3>
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <div className="text-3xl font-black text-neon-blue">24,812</div>
-                  <div className="text-xs text-gray-400 font-mono uppercase tracking-wider">Online Players</div>
-                </div>
-                <div className="h-px bg-white/10" />
-                <div>
-                  <div className="text-xl font-bold text-white">12ms</div>
-                  <div className="text-xs text-gray-400 font-mono uppercase tracking-wider">Avg Latency</div>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Categories</h3>
-              <div className="space-y-1">
-                {categories.map(cat => (
-                  <button
-                    key={cat}
-                    onClick={() => setActiveCategory(cat)}
-                    className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-between ${
-                      activeCategory === cat 
-                        ? 'bg-neon-blue/10 text-neon-blue border border-neon-blue/30 shadow-[0_0_15px_rgba(0,240,255,0.1)]' 
-                        : 'text-gray-400 hover:bg-white/5 hover:text-white border border-transparent'
-                    }`}
-                  >
-                    <span className="flex items-center gap-2">
-                      {cat === 'Action' && <Sword className="w-4 h-4" />}
-                      {cat === 'RPG' && <Shield className="w-4 h-4" />}
-                      {cat === 'Indie' && <Gamepad2 className="w-4 h-4" />}
-                      {cat === 'XERDOX AI' && <Zap className="w-4 h-4" />}
-                      {cat === 'All' && <LayoutGrid className="w-4 h-4" />}
-                      {cat}
-                    </span>
-                    {activeCategory === cat && <ChevronRight className="w-4 h-4" />}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Economy & Admin</h3>
-              <div className="space-y-1">
-                <button
-                  onClick={() => setActiveCategory('Earn Coins')}
-                  className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
-                    activeCategory === 'Earn Coins' 
-                      ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 shadow-[0_0_15px_rgba(234,179,8,0.1)]' 
-                      : 'text-gray-400 hover:bg-white/5 hover:text-white border border-transparent'
-                  }`}
-                >
-                  <Coins className="w-4 h-4" /> Earn GHI Coins
-                </button>
-                
-                {(profile?.role === 'owner' || profile?.role === 'manager') && (
-                  <button
-                    onClick={() => setActiveCategory('Admin Panel')}
-                    className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 mt-2 ${
-                      activeCategory === 'Admin Panel' 
-                        ? 'bg-red-500/10 text-red-400 border border-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.1)]' 
-                        : 'text-gray-400 hover:bg-white/5 hover:text-white border border-transparent'
-                    }`}
-                  >
-                    <Shield className="w-4 h-4" /> Admin Panel
-                  </button>
-                )}
-              </div>
-            </div>
-          </aside>
-
-          {/* Content Area */}
-          <div className="flex-1">
-            {activeCategory === 'Admin Panel' ? (
-              <AdminDashboard />
-            ) : activeCategory === 'Earn Coins' ? (
-              <EarnCoins />
-            ) : activeCategory === 'XERDOX AI' ? (
-              <div className="space-y-8">
-                <div className="flex flex-col items-center text-center mb-12">
-                  <motion.div 
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="w-20 h-20 bg-neon-purple/10 rounded-3xl flex items-center justify-center mb-6 border border-neon-purple/30 neon-glow-purple"
-                  >
-                    <Zap className="w-10 h-10 text-neon-purple" />
-                  </motion.div>
-                  <h2 className="text-4xl font-black mb-4">XERDOX <span className="text-neon-purple">STUDY</span> AI</h2>
-                  <p className="text-gray-400 max-w-lg">
-                    The world's most advanced study-buddy AI. Solve math, code, and learn complex concepts in seconds. ⚡
-                  </p>
-                </div>
-                <XerdoxAI />
-              </div>
-            ) : (
-              <>
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-4">
-                    <h2 className="text-2xl font-bold">Available <span className="text-neon-blue">Servers</span></h2>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredGames.length > 0 ? (
-                    filteredGames.map(game => (
-                      <motion.div
-                        key={game.id}
-                        layout
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.3 }}
-                        onClick={() => setSelectedGame(game)}
-                      >
-                        <GameCard game={game} />
-                      </motion.div>
-                    ))
-                  ) : (
-                    <div className="col-span-full py-20 text-center glass-panel rounded-2xl">
-                      <p className="text-gray-500">No games found matching your criteria.</p>
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      </main>
-
-      <footer className="bg-epic-gray mt-20 py-12 px-6 border-t border-white/5">
-        <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-neon-blue rounded-lg flex items-center justify-center font-bold text-black">G</div>
-            <span className="font-bold text-lg tracking-tighter">GAMES HUB <span className="text-neon-blue">INDIA</span></span>
-          </div>
-          <div className="flex gap-8 text-sm text-gray-400">
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-neon-blue transition-colors">Cookie Settings</a>
-          </div>
-          <p className="text-xs text-gray-500">© 2026 Games Hub India. All rights reserved.</p>
-        </div>
-      </footer>
-
-      {/* Player Overlay */}
-      <AnimatePresence>
-        {selectedGame && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black flex flex-col"
-          >
-            {/* Player Header */}
-            <div className="h-14 bg-epic-black/80 backdrop-blur-md border-b border-white/10 px-6 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <button 
-                  onClick={closeGame}
-                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-                <div className="h-4 w-px bg-white/10" />
-                <span className="font-bold text-sm">{selectedGame.title}</span>
-                <span className="text-[10px] bg-neon-blue/20 text-neon-blue px-1.5 py-0.5 rounded font-bold uppercase">Live</span>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <button className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white">
-                  <MessageSquare className="w-5 h-5" />
-                </button>
-                <button className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white">
-                  <Settings className="w-5 h-5" />
-                </button>
-                <button className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white">
-                  <Maximize2 className="w-5 h-5" />
-                </button>
-                <button 
-                  onClick={closeGame}
-                  className="ml-4 bg-red-500/10 text-red-500 px-4 py-1.5 rounded font-bold text-xs flex items-center gap-2 hover:bg-red-500 hover:text-white transition-all"
-                >
-                  <Power className="w-3 h-3" />
-                  EXIT
-                </button>
-              </div>
-            </div>
-
-            {/* Game Canvas / Iframe Area */}
-            <div className="flex-1 relative bg-epic-black flex items-center justify-center overflow-hidden">
-              <div className="absolute inset-0 opacity-20">
-                <img src={selectedGame.image} className="w-full h-full object-cover blur-3xl" referrerPolicy="no-referrer" />
-              </div>
-              
-              <motion.div 
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className={selectedGame.id === 'minecraft-web' && sessionStarted ? "absolute inset-0 bg-black z-50" : "relative w-full max-w-5xl aspect-video bg-black rounded-xl shadow-2xl border border-white/10 overflow-hidden"}
-              >
-                {/* Simulated Game Loading */}
-                {!sessionStarted ? (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-epic-black">
-                    <div className="w-16 h-16 border-4 border-neon-blue border-t-transparent rounded-full animate-spin mb-6" />
-                    <h3 className="text-xl font-bold mb-2">Initializing {selectedGame.category}...</h3>
-                    <p className="text-gray-500 text-sm animate-pulse">Optimizing for your browser via WebAssembly</p>
-                    <div className="absolute inset-0 opacity-0 animate-[fadeIn_1s_ease-in_2s_forwards]">
-                      <img src={selectedGame.image} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                        <div className="text-center">
-                          <h2 className="text-4xl font-black mb-4">{selectedGame.title}</h2>
-                          {!selectedGame.isFree && (
-                            <div className="mb-6 flex items-center justify-center gap-2 text-yellow-400 font-bold bg-yellow-400/10 px-4 py-2 rounded-full inline-flex">
-                              <Coins className="w-5 h-5" />
-                              {selectedGame.discount 
-                                ? selectedGame.price * (1 - selectedGame.discount / 100) 
-                                : selectedGame.price} GHI Coins / Session
-                            </div>
-                          )}
-                          <button 
-                            onClick={handleStartSession}
-                            className="bg-neon-blue text-black px-8 py-3 rounded-full font-bold hover:scale-105 transition-transform block mx-auto"
-                          >
-                            START SESSION
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : selectedGame.id === 'minecraft-web' ? (
-                  <MinecraftPlayer onExit={closeGame} />
-                ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-epic-black">
-                    <img src={selectedGame.image} className="w-full h-full object-cover opacity-30" referrerPolicy="no-referrer" />
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <h2 className="text-4xl font-black mb-4 text-neon-blue">SESSION ACTIVE</h2>
-                      <p className="text-gray-300">The game is now running in the browser.</p>
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-            </div>
-
-            {/* Player Footer */}
-            <div className="h-12 bg-epic-black/80 backdrop-blur-md border-t border-white/10 px-6 flex items-center justify-between text-[10px] text-gray-500 font-medium">
-              <div className="flex gap-6">
-                <span>LATENCY: 12ms</span>
-                <span>FPS: 60</span>
-                <span>ENGINE: WASM/WebGL2</span>
-              </div>
-              <div className="flex gap-4">
-                <span>REGION: ASIA-SOUTH-1 (MUMBAI)</span>
-                <span className="text-green-500">STABLE CONNECTION</span>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Floating Badge */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <div className="relative group cursor-pointer" onClick={() => setActiveCategory('XERDOX AI')}>
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-neon-purple to-neon-blue rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
-          
-          <div className="relative flex items-center bg-[#1a1a1a] px-6 py-3 rounded-full leading-none">
-            <div className="flex items-center space-x-3">
-              <Sparkles className="w-6 h-6 text-neon-blue animate-bounce" />
-              <span className="text-gray-100 font-bold tracking-wide">XERDOX AI</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Application Beta Modal */}
-      <AnimatePresence>
-        {showApplication && (
-          <ApplicationBeta onClose={() => setShowApplication(false)} />
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
+const GAMES = [
+  { id: 1, title: 'Minecraft Enhanced', image: 'https://images.unsplash.com/photo-1607853202273-797f1c22a38e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { id: 2, title: 'AI Battleground', image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { id: 3, title: 'Cyber Drift', image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { id: 4, title: 'Neon Syndicate', image: 'https://images.unsplash.com/photo-1605901309584-818e25960b8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { id: 5, title: 'Quantum Realm', image: 'https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { id: 6, title: 'Stellar Frontiers', image: 'https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+];
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-cyan-500/30">
+      {/* Navigation */}
+      <nav className="sticky top-0 z-50 w-full bg-[#050505]/80 backdrop-blur-md border-b border-white/10 px-6 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-cyan-500 rounded-lg flex items-center justify-center font-black text-black shadow-[0_0_15px_rgba(0,255,255,0.5)]">
+              GHI
+            </div>
+            <span className="font-black text-2xl tracking-tighter">
+              GAMES HUB <span className="text-cyan-400 drop-shadow-[0_0_8px_rgba(0,255,255,0.8)]">INDIA</span>
+            </span>
+          </div>
+          
+          <div className="relative group cursor-default">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-500 animate-pulse"></div>
+            <div className="relative flex items-center bg-[#0a0a0a] px-5 py-2 rounded-full border border-yellow-500/50">
+              <span className="text-yellow-400 font-bold text-sm tracking-widest uppercase" style={{ textShadow: '0 0 10px rgba(250,204,21,0.5)' }}>
+                Founder: RAVI
+              </span>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <main className="max-w-7xl mx-auto px-6 py-16 space-y-24">
+        {/* Hero Section */}
+        <section className="text-center space-y-6 pt-10">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-6xl md:text-8xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-white to-purple-500 drop-shadow-[0_0_25px_rgba(0,255,255,0.4)]"
+          >
+            GAMES HUB INDIA
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-xl md:text-2xl text-gray-400 font-medium max-w-2xl mx-auto"
+          >
+            The Ultimate Destination for AI-Hosted Games.
+          </motion.p>
+        </section>
+
+        {/* Innovators/Team Section */}
+        <section className="flex justify-center">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            whileHover={{ y: -5 }}
+            className="relative group w-full max-w-md"
+          >
+            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-500"></div>
+            <div className="relative bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/10 p-8 rounded-2xl text-center overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-purple-600" />
+              
+              <div className="inline-block px-3 py-1 bg-white/5 rounded-full text-xs font-bold tracking-widest text-gray-400 mb-6 border border-white/10">
+                INNOVATOR
+              </div>
+              
+              <h2 className="text-4xl font-black mb-2 flex flex-col items-center justify-center">
+                <span className="text-gray-500 text-lg tracking-widest mb-1">FOUNDER - RAVI</span>
+                <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-gray-100 via-gray-300 to-gray-500 font-black tracking-tighter mt-2 text-5xl" style={{ textShadow: '0 0 20px rgba(255,255,255,0.2)' }}>
+                  RAVI
+                  {/* Glitch effect layers */}
+                  <span className="absolute top-0 left-0 -ml-0.5 text-cyan-400 opacity-70 mix-blend-screen animate-[glitch_3s_infinite_linear_alternate-reverse] pointer-events-none" aria-hidden="true">RAVI</span>
+                  <span className="absolute top-0 left-0 ml-0.5 text-purple-500 opacity-70 mix-blend-screen animate-[glitch_2s_infinite_linear_alternate-reverse] pointer-events-none" aria-hidden="true">RAVI</span>
+                </span>
+              </h2>
+              
+              <div className="mt-6 inline-block bg-cyan-500/10 border border-cyan-500/30 px-4 py-1.5 rounded-full">
+                <span className="text-cyan-400 text-sm font-bold tracking-wide">
+                  Professional 3D Programmer
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        </section>
+
+        {/* Games Grid */}
+        <section>
+          <div className="flex items-center gap-4 mb-10">
+            <h2 className="text-3xl font-black text-white">Featured <span className="text-purple-500">Games</span></h2>
+            <div className="h-px flex-1 bg-gradient-to-r from-white/20 to-transparent" />
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {GAMES.map((game, i) => (
+              <motion.div
+                key={game.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ y: -10 }}
+                className="group relative bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden"
+              >
+                <div className="aspect-video relative overflow-hidden">
+                  <div className="absolute inset-0 bg-cyan-500/20 mix-blend-overlay z-10 group-hover:opacity-0 transition-opacity duration-500" />
+                  <img 
+                    src={game.image} 
+                    alt={game.title}
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out"
+                  />
+                  <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
+                    <Circle className="w-2 h-2 fill-green-500 text-green-500 animate-pulse" />
+                    <span className="text-[10px] font-bold text-green-400 uppercase tracking-wider">Server Online</span>
+                  </div>
+                </div>
+                
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-6 text-white group-hover:text-cyan-400 transition-colors">
+                    {game.title}
+                  </h3>
+                  
+                  <button className="w-full relative overflow-hidden rounded-xl bg-white/5 border border-white/10 py-3 font-bold text-sm tracking-widest transition-all duration-300 group-hover:border-cyan-500/50 group-hover:shadow-[0_0_20px_rgba(0,255,255,0.3)]">
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-purple-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+                    <span className="relative z-10 flex items-center justify-center gap-2 text-gray-300 group-hover:text-white transition-colors">
+                      <Play className="w-4 h-4" />
+                      PLAY NOW
+                    </span>
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      </main>
+    </div>
   );
 }
-
-
