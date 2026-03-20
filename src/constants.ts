@@ -24,17 +24,5 @@ export const GAMES: Game[] = [
     isFree: true,
     playersOnline: '12,450',
     rating: 4.9
-  },
-  {
-    id: 'xerdox-ai',
-    title: 'Xerdox AI',
-    developer: 'GHI Studios',
-    price: 0,
-    image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    category: 'XERDOX AI',
-    tags: ['AI', 'Study', 'Tools'],
-    isFree: true,
-    playersOnline: '5,102',
-    rating: 5.0
   }
 ];

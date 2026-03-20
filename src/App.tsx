@@ -21,7 +21,7 @@ const AppContent = () => {
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [sessionStarted, setSessionStarted] = useState(false);
   const [showApplication, setShowApplication] = useState(false);
-  const categories = ['All', 'Action', 'RPG', 'Indie', 'XERDOX AI'];
+  const categories = ['All', 'Action', 'RPG', 'Indie'];
 
   const filteredGames = GAMES.filter(g => {
     const matchesCategory = activeCategory === 'All' || g.category === activeCategory;
@@ -190,6 +190,29 @@ const AppContent = () => {
                 </div>
               </section>
             )}
+
+            {/* Our AI's Section */}
+            {activeCategory === 'All' && (
+              <section className="mb-16">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-4">
+                    <h2 className="text-2xl font-bold">Our <span className="text-neon-purple">AI's</span></h2>
+                  </div>
+                </div>
+                <div className="flex gap-6">
+                  {/* Xerdox AI Small Square Box */}
+                  <div 
+                    onClick={() => setActiveCategory('XERDOX AI')}
+                    className="w-24 h-24 bg-[#1a1a1a] border border-neon-purple/30 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all group relative overflow-hidden shadow-[0_0_15px_rgba(176,38,255,0.15)] hover:shadow-[0_0_25px_rgba(176,38,255,0.3)]"
+                    title="Open Xerdox AI"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <X className="w-8 h-8 text-neon-purple mb-1 group-hover:animate-pulse" />
+                    <span className="text-[10px] font-bold text-white tracking-widest">XERDOX</span>
+                  </div>
+                </div>
+              </section>
+            )}
           </>
         )}
 
@@ -232,7 +255,6 @@ const AppContent = () => {
                       {cat === 'Action' && <Sword className="w-4 h-4" />}
                       {cat === 'RPG' && <Shield className="w-4 h-4" />}
                       {cat === 'Indie' && <Gamepad2 className="w-4 h-4" />}
-                      {cat === 'XERDOX AI' && <Zap className="w-4 h-4" />}
                       {cat === 'All' && <LayoutGrid className="w-4 h-4" />}
                       {cat}
                     </span>
@@ -456,20 +478,6 @@ const AppContent = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Floating Badge */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <div className="relative group cursor-pointer" onClick={() => setActiveCategory('XERDOX AI')}>
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-neon-purple to-neon-blue rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
-          
-          <div className="relative flex items-center bg-[#1a1a1a] px-6 py-3 rounded-full leading-none">
-            <div className="flex items-center space-x-3">
-              <Sparkles className="w-6 h-6 text-neon-blue animate-bounce" />
-              <span className="text-gray-100 font-bold tracking-wide">XERDOX AI</span>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Application Beta Modal */}
       <AnimatePresence>
