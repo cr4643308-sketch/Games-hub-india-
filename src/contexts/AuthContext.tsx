@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 import { doc, getDoc, setDoc, onSnapshot, updateDoc, increment } from 'firebase/firestore';
+import { signInWithCustomToken } from 'firebase/auth';
 import { useUser, useAuth as useClerkAuth } from '@clerk/clerk-react';
 
 export interface UserProfile {
@@ -36,7 +37,7 @@ export const useAuth = () => {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, isLoaded } = useUser();
-  const { signOut } = useClerkAuth();
+  const { signOut, getToken } = useClerkAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isGuest, setIsGuest] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -52,9 +53,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsGuest(false);
         localStorage.removeItem('isGuest');
         setAuthError(null);
-        const userRef = doc(db, 'users', user.id);
         
         try {
+          // Attempt to get the Clerk Firebase integration token
+          const token = await getToken({ template: 'integration_firebase' });
+          
+          if (token) {
+            // Sign in to Firebase with the custom token
+            await signInWithCustomToken(auth, token);
+          } else {
+            console.warn("Clerk Firebase integration token not found. Firestore operations may fail if security rules require authentication.");
+          }
+
+          const userRef = doc(db, 'users', user.id);
           const docSnap = await getDoc(userRef);
           if (!docSnap.exists()) {
             const newProfile: UserProfile = {
@@ -81,7 +92,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setLoading(false);
         } catch (error: any) {
           console.error("Error fetching/creating user profile:", error);
-          setAuthError(`Error setting up your profile: ${error.message}. Please try again.`);
+          if (error.message.includes('Missing or insufficient permissions') || error.message.includes('template')) {
+            setAuthError(`Firebase Integration Required: Please create a JWT template named 'integration_firebase' in your Clerk dashboard to connect to Firestore.`);
+          } else {
+            setAuthError(`Error setting up your profile: ${error.message}. Please try again.`);
+          }
           await signOut();
           setProfile(null);
           setLoading(false);
@@ -101,7 +116,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => {
       if (unsubProfile) unsubProfile();
     };
-  }, [user, isLoaded]);
+  }, [user, isLoaded, getToken]);
 
   const skipLogin = () => {
     setIsGuest(true);
