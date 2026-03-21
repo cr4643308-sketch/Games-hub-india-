@@ -1,16 +1,19 @@
 import React from 'react';
-import { Search, User, Globe, LogOut, Coins, Shield } from 'lucide-react';
+import { Search, Globe, Coins, Shield } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'motion/react';
+import { UserButton, useUser } from '@clerk/clerk-react';
+import { Link } from 'react-router-dom';
 
 export const Navbar = () => {
-  const { user, profile, isGuest, loginWithGoogle, logout } = useAuth();
+  const { profile, isGuest } = useAuth();
+  const { isSignedIn } = useUser();
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-epic-black/95 backdrop-blur-sm border-b border-white/5 px-6 py-4">
       <div className="max-w-[1600px] mx-auto flex items-center justify-between">
         <div className="flex items-center gap-8">
-          <div className="flex flex-col">
+          <Link to="/" className="flex flex-col">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-neon-blue rounded-lg flex items-center justify-center font-bold text-black shadow-[0_0_15px_rgba(0,240,255,0.5)]">G</div>
               <span className="font-bold text-xl tracking-tighter">GAMES HUB <span className="text-neon-blue drop-shadow-[0_0_10px_rgba(0,240,255,0.5)]">INDIA</span></span>
@@ -21,7 +24,7 @@ export const Navbar = () => {
               </div>
               <span className="text-[9px] font-bold text-neon-purple tracking-[0.2em] uppercase drop-shadow-[0_0_5px_rgba(176,38,255,0.5)]">XERDOX AI</span>
             </div>
-          </div>
+          </Link>
           
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-400">
             <a href="#" className="text-white hover:text-neon-blue transition-colors">STORE</a>
@@ -43,7 +46,7 @@ export const Navbar = () => {
           
           <div className="flex items-center gap-2">
             {/* GHI Coins Display - Top Right */}
-            {(user || isGuest) && profile && (
+            {(isSignedIn || isGuest) && profile && (
               <motion.div 
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -66,26 +69,24 @@ export const Navbar = () => {
               <Globe className="w-5 h-5 text-gray-400 hover:text-neon-blue" />
             </button>
             
-            {user ? (
+            {isSignedIn ? (
               <div className="flex items-center gap-3 ml-2">
-                <img src={user.photoURL || ''} alt="Profile" className="w-8 h-8 rounded-full border border-neon-blue/50 shadow-[0_0_10px_rgba(0,240,255,0.3)]" referrerPolicy="no-referrer" />
-                <button 
-                  onClick={logout}
-                  className="p-2 hover:bg-red-500/10 rounded-full transition-colors group"
-                  title="Sign Out"
-                >
-                  <LogOut className="w-5 h-5 text-gray-400 group-hover:text-red-400" />
-                </button>
+                <UserButton 
+                  afterSignOutUrl="/"
+                  appearance={{
+                    elements: {
+                      avatarBox: "w-8 h-8 border border-neon-blue/50 shadow-[0_0_10px_rgba(0,240,255,0.3)]"
+                    }
+                  }}
+                />
               </div>
             ) : (
-              <button 
-                type="button"
-                onClick={loginWithGoogle}
+              <Link 
+                to="/login"
                 className="bg-neon-blue text-black px-6 py-2 rounded-full font-bold text-sm hover:bg-white transition-colors flex items-center gap-2 shadow-[0_0_15px_rgba(0,240,255,0.4)]"
               >
-                <User className="w-4 h-4" />
                 SIGN IN
-              </button>
+              </Link>
             )}
           </div>
         </div>

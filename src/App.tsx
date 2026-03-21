@@ -1,21 +1,32 @@
 import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { ClerkProvider } from '@clerk/clerk-react';
 import { Navbar } from './components/Navbar';
 import { GameCard } from './components/GameCard';
 import { ProjectBlueprint } from './ProjectBlueprint';
 import { XerdoxAI } from './components/XerdoxAI';
 import { ApplicationBeta } from './components/ApplicationBeta';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { AuthModal } from './components/AuthModal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { EarnCoins } from './components/EarnCoins';
+import { Login } from './pages/Login';
 import { GAMES, Game } from './constants';
 import { ChevronRight, LayoutGrid, List, X, Maximize2, Settings, MessageSquare, Power, ShoppingBag, Coins, PlaySquare, Calendar, Shield, Sparkles, Search, Users, Sword, Zap, Gamepad2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 import { MinecraftPlayer } from './components/MinecraftPlayer';
 
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+const isKeyValid = PUBLISHABLE_KEY && (PUBLISHABLE_KEY.startsWith('pk_test_') || PUBLISHABLE_KEY.startsWith('pk_live_'));
+
+if (!isKeyValid) {
+  console.error("Missing or invalid Clerk Publishable Key. It should start with 'pk_test_' or 'pk_live_'.");
+}
+
 const AppContent = () => {
   const { user, profile, spendCoins } = useAuth();
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -90,7 +101,7 @@ const AppContent = () => {
     }
 
     if (!user) {
-      alert("Please sign in to play premium games!");
+      navigate('/login');
       return;
     }
 
@@ -114,7 +125,6 @@ const AppContent = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <AuthModal />
       
       <main className="flex-1 max-w-[1600px] mx-auto w-full px-6 py-8">
         {/* Hero Section */}
@@ -617,9 +627,52 @@ const AppContent = () => {
 };
 
 export default function App() {
+  if (!isKeyValid) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-cyber-dark text-white p-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-10 mix-blend-luminosity" />
+        <div className="absolute inset-0 bg-gradient-to-t from-cyber-dark via-cyber-dark/80 to-transparent" />
+        
+        <div className="relative z-10 max-w-lg w-full text-center glass-panel p-10 rounded-3xl border border-red-500/30 shadow-[0_0_50px_rgba(239,68,68,0.1)]">
+          <div className="w-20 h-20 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-red-500/30">
+            <Shield className="w-10 h-10 text-red-500" />
+          </div>
+          <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500 mb-4">
+            Authentication Setup Required
+          </h1>
+          <p className="text-gray-300 mb-8 text-lg">
+            Please add your Clerk Publishable Key to the environment variables to enable the login system.
+          </p>
+          
+          <div className="bg-black/50 rounded-xl p-6 text-left border border-white/10 mb-8">
+            <h3 className="font-bold text-white mb-2 flex items-center gap-2">
+              <Settings className="w-4 h-4 text-neon-blue" />
+              How to fix this:
+            </h3>
+            <ol className="list-decimal list-inside space-y-2 text-sm text-gray-400">
+              <li>Go to your <a href="https://dashboard.clerk.com/" target="_blank" rel="noreferrer" className="text-neon-blue hover:underline">Clerk Dashboard</a></li>
+              <li>Create or select your project</li>
+              <li>Copy the <strong>Publishable Key</strong> (starts with <code className="text-neon-purple bg-white/5 px-1 rounded">pk_test_</code>)</li>
+              <li>Open the Settings menu (gear icon) in AI Studio</li>
+              <li>Add a new secret named <code className="text-neon-blue bg-white/5 px-1 rounded">VITE_CLERK_PUBLISHABLE_KEY</code></li>
+              <li>Paste your key and save</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <BrowserRouter>
+      <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+        <AuthProvider>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/*" element={<AppContent />} />
+          </Routes>
+        </AuthProvider>
+      </ClerkProvider>
+    </BrowserRouter>
   );
 }
