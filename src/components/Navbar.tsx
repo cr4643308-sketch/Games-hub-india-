@@ -1,14 +1,9 @@
 import React from 'react';
-import { Search, Globe, Coins, Shield } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { Search, Globe } from 'lucide-react';
 import { motion } from 'motion/react';
-import { UserButton, useUser } from '@clerk/clerk-react';
 import { Link } from 'react-router-dom';
 
 export const Navbar = () => {
-  const { profile, isGuest } = useAuth();
-  const { isSignedIn } = useUser();
-
   return (
     <nav className="sticky top-0 z-50 w-full bg-epic-black/95 backdrop-blur-sm border-b border-white/5 px-6 py-4">
       <div className="max-w-[1600px] mx-auto flex items-center justify-between">
@@ -45,49 +40,9 @@ export const Navbar = () => {
           </div>
           
           <div className="flex items-center gap-2">
-            {/* GHI Coins Display - Top Right */}
-            {(isSignedIn || isGuest) && profile && (
-              <motion.div 
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="flex items-center gap-2 bg-gradient-to-r from-neon-purple/20 to-neon-blue/20 animate-pulse px-4 py-2 rounded-full border border-neon-blue/30 shadow-[0_0_15px_rgba(0,240,255,0.2)] mr-4"
-              >
-                <Coins className="w-5 h-5 text-neon-blue" />
-                <span className="text-white font-bold text-sm tracking-wider">
-                  {profile.ghiCoins.toLocaleString()} GHI
-                </span>
-                {profile.role !== 'user' && (
-                  <span className="ml-2 text-[10px] bg-neon-purple/30 px-2 py-0.5 rounded-full text-white font-bold uppercase flex items-center gap-1 border border-neon-purple/50">
-                    <Shield className="w-3 h-3" />
-                    {profile.role}
-                  </span>
-                )}
-              </motion.div>
-            )}
-
             <button className="p-2 hover:bg-white/5 rounded-full transition-colors">
               <Globe className="w-5 h-5 text-gray-400 hover:text-neon-blue" />
             </button>
-            
-            {isSignedIn ? (
-              <div className="flex items-center gap-3 ml-2">
-                <UserButton 
-                  afterSignOutUrl="/"
-                  appearance={{
-                    elements: {
-                      avatarBox: "w-8 h-8 border border-neon-blue/50 shadow-[0_0_10px_rgba(0,240,255,0.3)]"
-                    }
-                  }}
-                />
-              </div>
-            ) : (
-              <Link 
-                to="/login"
-                className="bg-neon-blue text-black px-6 py-2 rounded-full font-bold text-sm hover:bg-white transition-colors flex items-center gap-2 shadow-[0_0_15px_rgba(0,240,255,0.4)]"
-              >
-                SIGN IN
-              </Link>
-            )}
           </div>
         </div>
       </div>
