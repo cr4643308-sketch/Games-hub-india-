@@ -5,6 +5,7 @@ import { GameCard } from './components/GameCard';
 import { ProjectBlueprint } from './ProjectBlueprint';
 import { XerdoxAI } from './components/XerdoxAI';
 import { ApplicationBeta } from './components/ApplicationBeta';
+import { MinecraftHosting } from './components/MinecraftHosting';
 import { GAMES, Game } from './constants';
 import { ChevronRight, LayoutGrid, List, X, Maximize2, Settings, MessageSquare, Power, ShoppingBag, Coins, PlaySquare, Calendar, Shield, Sparkles, Search, Users, Sword, Zap, Gamepad2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -396,6 +397,7 @@ const AppContent = () => {
                 </div>
               </>
             )}
+            <MinecraftHosting />
           </div>
         </div>
       </main>
