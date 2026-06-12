@@ -4,10 +4,11 @@ import { Navbar } from './components/Navbar';
 import { GameCard } from './components/GameCard';
 import { ProjectBlueprint } from './ProjectBlueprint';
 import { XerdoxAI } from './components/XerdoxAI';
+import { AuraPulseAIWorkspace } from './components/AuraPulseAIWorkspace';
 import { ApplicationBeta } from './components/ApplicationBeta';
 import { MinecraftHosting } from './components/MinecraftHosting';
 import { GAMES, Game } from './constants';
-import { ChevronRight, LayoutGrid, List, X, Maximize2, Settings, MessageSquare, Power, ShoppingBag, Coins, PlaySquare, Calendar, Shield, Sparkles, Search, Users, Sword, Zap, Gamepad2 } from 'lucide-react';
+import { ChevronRight, LayoutGrid, List, X, Maximize2, Settings, MessageSquare, Power, ShoppingBag, Coins, PlaySquare, Calendar, Shield, Sparkles, Search, Users, Sword, Zap, Gamepad2, Bot } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 import { MinecraftPlayer } from './components/MinecraftPlayer';
@@ -293,6 +294,16 @@ const AppContent = () => {
                     <X className="w-8 h-8 text-neon-purple mb-1 group-hover:animate-pulse" />
                     <span className="text-[10px] font-bold text-white tracking-widest">XERDOX</span>
                   </div>
+                  {/* AuraPulse AI Small Square Box */}
+                  <div 
+                    onClick={() => setActiveCategory('AURAPULSE AI')}
+                    className="w-24 h-24 bg-[#1a1a1a] border border-neon-blue/30 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all group relative overflow-hidden shadow-[0_0_15px_rgba(0,240,255,0.15)] hover:shadow-[0_0_25px_rgba(0,240,255,0.3)]"
+                    title="Open AuraPulse AI"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-neon-blue/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Bot className="w-8 h-8 text-neon-blue mb-1 group-hover:animate-pulse" />
+                    <span className="text-[10px] font-bold text-white tracking-widest">AURA</span>
+                  </div>
                 </div>
               </section>
             )}
@@ -366,6 +377,23 @@ const AppContent = () => {
                   </p>
                 </div>
                 <XerdoxAI onClose={() => setActiveCategory('All')} />
+              </div>
+            ) : activeCategory === 'AURAPULSE AI' ? (
+              <div className="space-y-8">
+                <div className="flex flex-col items-center text-center mb-12">
+                  <motion.div 
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="w-20 h-20 bg-neon-blue/10 rounded-3xl flex items-center justify-center mb-6 border border-neon-blue/30"
+                  >
+                    <Bot className="w-10 h-10 text-neon-blue" />
+                  </motion.div>
+                  <h2 className="text-4xl font-black mb-4">AURAPULSE <span className="text-neon-blue">AI</span></h2>
+                  <p className="text-gray-400 max-w-lg">
+                    High-performance local AI engine for scripting, thumbnails, and troubleshooting. ⚡
+                  </p>
+                </div>
+                <AuraPulseAIWorkspace onClose={() => setActiveCategory('All')} />
               </div>
             ) : (
               <>
@@ -539,21 +567,37 @@ const AppContent = () => {
 
       {/* Floating Xerdox AI Button */}
       <AnimatePresence>
-        {activeCategory !== 'XERDOX AI' && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setActiveCategory('XERDOX AI')}
-            className="fixed bottom-8 right-8 z-50 flex items-center gap-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-neon-purple/30 p-2 pr-5 rounded-full shadow-[0_0_30px_rgba(176,38,255,0.2)] hover:shadow-[0_0_40px_rgba(176,38,255,0.4)] transition-all group"
-          >
-            <div className="w-10 h-10 rounded-full bg-neon-purple/20 flex items-center justify-center border border-neon-purple/50 group-hover:bg-neon-purple/30 transition-colors">
-              <span className="text-neon-purple font-black text-xl leading-none">X</span>
-            </div>
-            <span className="text-white font-bold tracking-wider text-sm">XERDOX AI</span>
-          </motion.button>
+        {activeCategory !== 'XERDOX AI' && activeCategory !== 'AURAPULSE AI' && (
+          <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-4">
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 20 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setActiveCategory('XERDOX AI')}
+              className="flex items-center gap-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-neon-purple/30 p-2 pr-5 rounded-full shadow-[0_0_30px_rgba(176,38,255,0.2)] hover:shadow-[0_0_40px_rgba(176,38,255,0.4)] transition-all group"
+            >
+              <div className="w-10 h-10 rounded-full bg-neon-purple/20 flex items-center justify-center border border-neon-purple/50 group-hover:bg-neon-purple/30 transition-colors">
+                <span className="text-neon-purple font-black text-xl leading-none">X</span>
+              </div>
+              <span className="text-white font-bold tracking-wider text-sm">XERDOX AI</span>
+            </motion.button>
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 20 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setActiveCategory('AURAPULSE AI')}
+              className="flex items-center gap-3 bg-[#0a0a0a]/90 backdrop-blur-xl border border-neon-blue/30 p-2 pr-5 rounded-full shadow-[0_0_30px_rgba(0,240,255,0.2)] hover:shadow-[0_0_40px_rgba(0,240,255,0.4)] transition-all group"
+            >
+              <div className="w-10 h-10 rounded-full bg-neon-blue/20 flex items-center justify-center border border-neon-blue/50 group-hover:bg-neon-blue/30 transition-colors">
+                <Bot className="text-neon-blue w-6 h-6" />
+              </div>
+              <span className="text-white font-bold tracking-wider text-sm">AURA AI</span>
+            </motion.button>
+          </div>
         )}
       </AnimatePresence>
     </div>
